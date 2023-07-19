@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>demo1</artifactId>
+	<artifactId>demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>demo1</name>
 	<description>demo1</description>
@@ -56,6 +56,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>RELEASE</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

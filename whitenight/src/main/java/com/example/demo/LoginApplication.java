@@ -7,10 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
       /*  (scanBasePackages="com.example.demo.controller.UserController")*/
 @MapperScan(basePackages = "com.example.demo.mapper.UserMapper")
-public class Demo1Application {
+public class LoginApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Demo1Application.class, args);
+        SpringApplication.run(LoginApplication.class, args);
     }
 
 }
