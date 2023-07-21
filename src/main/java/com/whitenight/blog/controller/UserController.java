@@ -40,8 +40,8 @@ public class UserController {
 
     //实现注册功能
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String signUp(String name, String password){
-        userService.Insert(name, password);
+    public String signUp(String username, String password){
+        userService.Insert(username, password);
         return "success";
     }
 }
