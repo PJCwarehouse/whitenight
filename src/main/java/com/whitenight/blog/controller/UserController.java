@@ -22,9 +22,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "/loginIn", method = RequestMethod.POST)
-    public String login(String name, String password){
-        User user = userService.LoginIn(name, password);
-        log.info("name:{}",name);
+    public String login(String username, String password){
+        User user = userService.LoginIn(username, password);
+        log.info("username:{}",username);
         log.info("password:{}",password);
         if(user!=null){
             return "success";

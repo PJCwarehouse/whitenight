@@ -5,12 +5,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-      /*  (scanBasePackages="controller.com.whitenightApplication.blog.UserController")*/
-@MapperScan(basePackages = "mapper.com.whitenightApplication.blog.UserMapper")
-public class whitenightApplication {
+      /*  (scanBasePackages="controller.com.WhiteNightApplication.blog.UserController")*/
+@MapperScan(basePackages = "mapper.com.WhiteNightApplication.blog.UserMapper")
+public class WhiteNightApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(whitenightApplication.class, args);
+        SpringApplication.run(WhiteNightApplication.class, args);
     }
 
 }
