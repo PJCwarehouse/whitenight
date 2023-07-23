@@ -1,4 +1,4 @@
 #忽略.idea
-/.idea/
+/.idea/*
 #排除target
-/target/
+/target/*
