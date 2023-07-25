@@ -18,7 +18,7 @@ public class UserController {
     //实现登录
     @RequestMapping("/login")
     public String show(){
-        return "login";
+        return "loginb";
     }
 
     @RequestMapping(value = "/loginIn", method = RequestMethod.POST)
@@ -35,7 +35,7 @@ public class UserController {
 
     @RequestMapping("/signup")
     public String disp(){
-        return "signup";
+        return "signupb";
     }
 
     //实现注册功能
@@ -44,5 +44,6 @@ public class UserController {
         userService.Insert(username, password);
         return "success";
     }
+
 }
 
