@@ -18,14 +18,14 @@ public class UserController {
     //实现登录
     @RequestMapping("/login")
     public String show(){
-        return "loginb";
+        return "test2";
     }
 
     @RequestMapping(value = "/loginIn", method = RequestMethod.POST)
     public String login(String username, String password){
-        User user = userService.LoginIn(username, password);
         log.info("username:{}",username);
         log.info("password:{}",password);
+        User user = userService.LoginIn(username, password);
         if(user!=null){
             return "success";
         }else {
