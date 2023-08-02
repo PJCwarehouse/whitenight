@@ -18,7 +18,7 @@ public class UserController {
     //实现登录
     @RequestMapping("/login")
     public String show(){
-        return "test2";
+        return "loginb";
     }
 
     @RequestMapping(value = "/loginIn", method = RequestMethod.POST)
