@@ -1,4 +1,4 @@
-package com.itguang.springsecuritydemo2.security;
+package com.whitenight.blog.security;
 
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 
