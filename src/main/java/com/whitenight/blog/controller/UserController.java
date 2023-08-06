@@ -32,18 +32,18 @@ public class UserController {
         log.info("username:{}",username);
         log.info("password:{}",password);
         System.out.println("调用loginIn");
-        UserDetails user = userService.loadUserByUsername(username, password);
+        UserDetails user = userService.loadUserByUsername(username);
 
         if(user!=null){
             return "success";
         }else {
-            return "index";
+            return "error";
         }
     }
 
     @RequestMapping("/signup")
     public String disp(){
-        System.out.println("username,password");
+        System.out.println("跳转到注册页面");
         return "signupb";
     }
 
