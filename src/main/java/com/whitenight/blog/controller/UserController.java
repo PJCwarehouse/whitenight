@@ -32,11 +32,10 @@ public class UserController {
         log.info("username:{}",username);
         log.info("password:{}",password);
         System.out.println("调用loginIn");
-        UserDetails user = userService.loadUserByUsername(username);
-
-        if(user!=null){
+        User user = userService.LoginIn(username,password);
+        if (user != null) {
             return "success";
-        }else {
+        } else {
             return "error";
         }
     }

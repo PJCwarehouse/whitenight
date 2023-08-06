@@ -10,6 +10,10 @@ import org.apache.ibatis.annotations.Select;
 public interface UserMapper {
     @Select("SELECT * FROM users WHERE username = #{username} AND password = #{password}")
     User getInfo(@Param("username") String username, @Param("password") String password);
+
+    @Select("SELECT * FROM users WHERE username = #{username}")
+    User getInfoByUserName(@Param("username") String username);
+
     @Insert("insert into users(username,password)values(#{username},#{password})")
     void saveInfo(@Param("username") String username, @Param("password") String password);
 }
