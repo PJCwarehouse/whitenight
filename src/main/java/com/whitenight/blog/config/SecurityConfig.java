@@ -4,15 +4,15 @@ import com.whitenight.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -25,39 +25,27 @@ import java.io.IOException;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
+    @Autowired//依赖注入
     private UserService userService;
-
-
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        System.out.println("configure http");
-//        http
-//                .authorizeRequests()
-//                .antMatchers( "/signup","/success").permitAll() // 允许访问登录和注册页面
-//                .anyRequest().authenticated() // 其他请求需要认证
-//                .and()
-//                .formLogin()
-//                .loginPage("/login") // 指定自定义的登录页面
-//                .loginProcessingUrl("/loginIn") // 配置登录表单提交路径为POST方法
-//                .defaultSuccessUrl("/success") // 登录成功后跳转的页面
-//                .permitAll()
-//                .and()
-//                .logout()
-//                .logoutUrl("/logout") // 指定登出的URL
-//                .logoutSuccessUrl("/login") // 登出成功后跳转的页面
-//                .permitAll();
-//    }
-
+//    @Bean
+//    RoleHierarchy roleHierarchy() {
+//        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+//        roleHierarchy.setHierarchy("admin > visitor");
+//        return roleHierarchy;
+//    }//没有运行成功，不知道为啥
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/error").permitAll() //error 放开权限 ，不然登陆失败跳转不过来
-                .anyRequest().authenticated();
+        http.authorizeRequests()//表示开启权限设置
+                .antMatchers("login","/success","/error").permitAll() //error 放开权限 ，不然登陆失败跳转不过来
+                .antMatchers("/home page").hasAnyRole("visitor","admin")
+                .antMatchers("/signup").hasRole("admin")//数据库权限名加了ROLE前缀，这里用hasRole方便，不用hasAnyAuthority
+                .anyRequest().authenticated();//authenticated()要求在执行该请求时， 必须已经登录了应用。
+        // 如果用户没有认证的话，Spring Security的Filter将会捕获该请求，并将用户重定向到应用的登录页面。
+        // 同时，permitAll()方法允许请求没有任何的安全限制。
 
         http.formLogin().loginPage("/login")
-                .loginProcessingUrl("/loginIn") // 配置登录表单提交路径为POST方法
+//                .loginProcessingUrl("/login") // 默认提交路径为login，可以不用配置
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .successHandler(new AuthenticationSuccessHandler() {
@@ -69,6 +57,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     @Override
                     public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
                         httpServletResponse.sendRedirect("/error"); // 失败跳error
+//                        String errorMessage = "用户名或密码错误，请重试"; // 自定义错误消息，之后在html界面利用Thymeleaf设置一下，使其显示在网页上
+//                        httpServletRequest.getSession().setAttribute("errorMessage", errorMessage);
+//                        // 将用户重定向到登录页面并显示错误消息
+//                        httpServletResponse.sendRedirect("/login");
+
                     }
                 }).permitAll() //这个permitAll的意思是 /login /loginIn 这两个接口不需要权限（不然未登录用户没法登录）
                 .and().csrf().disable();
