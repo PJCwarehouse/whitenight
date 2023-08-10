@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--  <link rel="stylesheet" href="../lib/css/bootstrap.min.css"> 连不上，不知道为啥-->
+
+  <!-- 新 Bootstrap4 核心 CSS 文件 -->
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+
+  <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+
+  <!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
+  <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+
+  <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <title>Personal Blog Admin</title>
+  <style>
+    /* 个人头像样式 */
+    .profile-image {
+      width: 100px;
+      height: 100px;
+    }
+
+    /* 导航栏样式 */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1000;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    /* 内容区域样式 */
+    .content-section {
+      display: none;
+      padding: 20px;
+      margin-top: 20px;
+      color: #000;
+    }
+
+    /* 显示活动内容 */
+    .content-section.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- 左边导航栏 -->
+    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+      <div class="sidebar-sticky">
+        <h4 class="py-3">My Blog</h4>
+        <div class="text-center">
+          <img src="" alt="Profile Image" class="img-fluid rounded-circle profile-image">
+        </div>
+        <ul class="nav flex-column mt-3">
+          <li class="nav-item">
+            <a class="nav-link active" href="#dashboard">
+              Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#publish">
+              Publish Article
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#articles">
+              Article Management
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#comments">
+              Comment Management
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#permissions">
+              Permission Management
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- 右边内容区域 -->
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <!-- 这里的标题元素不再写死，而是用一个 ID 来标识，以便通过 JavaScript 更新内容 -->
+        <h1 id="page-title" class="h2">Dashboard</h1>
+      </div>
+      <div id="dashboard" class="content-section active">
+        <a href="/signup">注册</a>
+        <a href="/home page">主页</a>
+        <p>This is the Dashboard content.</p>
+      </div>
+      <div id="publish" class="content-section">
+        <!-- Publish Article 内容 -->
+        <p>This is the Publish Article content.</p>
+      </div>
+      <div id="articles" class="content-section">
+        <a href="/signup">注册</a>
+        <a href="/home page">主页</a>
+      </div>
+      <div id="comments" class="content-section">
+        <!-- Comment Management 内容 -->
+        <p>This is the Comment Management content.</p>
+      </div>
+      <div id="permissions" class="content-section">
+        <!-- Permission Management 内容 -->
+        <p>This is the Permission Management content.</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!--<script src="../lib/js/bootstrap.bundle.min.js"></script>一般是放在body底部，执行会更快，如果需要在一开始就加载则按情况而定-->
+<script>
+  const navLinks = document.querySelectorAll('.nav-link');
+  const contentSections = document.querySelectorAll('.content-section');
+  const pageTitle = document.getElementById('page-title');
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      contentSections.forEach(section => {
+        section.classList.remove('active');
+      });
+
+      const targetId = this.getAttribute('href').substring(1);
+      const targetSection = document.getElementById(targetId);
+
+      targetSection.classList.add('active');
+      pageTitle.textContent = this.textContent;
+    });
+  });
+</script>
+</body>
+</html>

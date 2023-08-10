@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博客编辑页</title>
+    <!-- <script src="js/jquery.min.js"></script> -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <!-- 引入 editor.md 的依赖 -->
+    <link rel="stylesheet" href="../lib/editor.md-master/css/editormd.min.css" />
+    <script src="../lib/editor.md-master/lib/marked.min.js"></script>
+    <script src="../lib/editor.md-master/lib/prettify.min.js"></script>
+    <script src="../lib/editor.md-master/editormd.js"></script>
+    <style>
+        .blog-edit-container {
+            width: 1000px;
+            height: calc(100% - 50px);
+            margin: 0 auto;
+        }
+
+        .blog-edit-container .title {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .blog-edit-container .title #title {
+            height: 40px;
+            width: 895px;
+            border: none;
+            padding-left: 5px;
+            font-size: 20px;
+            border-radius: 5px;
+            /* 去掉轮廓线 鼠标选中后无黑圈*/
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* 点击输入框 输入框不透明 */
+        .blog-edit-container .title #title:focus {
+            background-color: rgb(255, 255, 255);
+        }
+
+        .blog-edit-container .title #submit {
+            height: 40px;
+            width: 100px;
+            border-radius: 5px;
+            color: white;
+            background-color: orange;
+            border: none;
+        }
+
+        .blog-edit-container .title #submit:active {
+            background-color: #666;
+        }
+
+        #editor {
+            border-radius: 10px;
+            /* background-color: rgba(255, 255, 255, 0.7); */
+            opacity: 80%;
+        }
+
+    </style>
+</head>
+<body>
+
+<!--博客编辑区  -->
+<div class="blog-edit-container">
+    <!-- 标题编辑区 -->
+    <div class="title">
+        <input type="text" id="title" placeholder="请输入文章标题">
+        <button id="submit">发布文章</button>
+    </div>
+    <!-- 博客编辑器  id选择器为了和markdown对接-->
+    <div id="editor">
+
+    </div>
+</div>
+<script>
+    var editor = editormd("editor", {
+        // 这里的尺寸必须在这里设置. 设置样式会被 editormd 自动覆盖掉.
+        width: "100%",
+        // 设定编辑器高度
+        height: "calc(100% - 50px)",
+        // 编辑器中的初始内容
+        markdown: "# 在这里写下一篇博客",
+        // 指定 editor.md 依赖的插件路径
+        path: "editor.md/lib/"
+    });
+</script>
+</body>
+</html>
