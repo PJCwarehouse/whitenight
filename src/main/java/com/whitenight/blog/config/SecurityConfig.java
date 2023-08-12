@@ -38,10 +38,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()//表示开启权限设置
                 .antMatchers("login","/success","/error",
-                        "/lib/css/bootstrap.min.css","/bootstrap.bundle.min.js","/management").permitAll() //error 放开权限 ，不然登陆失败跳转不过来
+                        "../lib/css/bootstrap.min.css","../bootstrap.bundle.min.js","/management").permitAll() //error 放开权限 ，不然登陆失败跳转不过来
                 .antMatchers("/home page").hasAnyRole("visitor","admin")
                 .antMatchers("/signup").hasRole("admin")//数据库权限名加了ROLE前缀，这里用hasRole方便，不用hasAnyAuthority
-                .anyRequest().authenticated();//authenticated()要求在执行该请求时， 必须已经登录了应用。
+                .anyRequest().permitAll();//方便测试
+//                .anyRequest().authenticated();
+        //authenticated()要求在执行该请求时， 必须已经登录了应用。
         // 如果用户没有认证的话，Spring Security的Filter将会捕获该请求，并将用户重定向到应用的登录页面。
         // 同时，permitAll()方法允许请求没有任何的安全限制。
 
