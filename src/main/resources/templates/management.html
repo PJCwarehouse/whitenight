@@ -3,17 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
+  <!-- 新 Bootstrap4 核心 CSS 文件 -->
+<!--  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
 
   <!-- 新 Bootstrap4 核心 CSS 文件 -->
 <!--  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">-->
-
 <!--  &lt;!&ndash; jQuery文件。务必在bootstrap.min.js 之前引入 &ndash;&gt;-->
 <!--  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>-->
-
 <!--  &lt;!&ndash; bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js &ndash;&gt;-->
 <!--  <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>-->
-
 <!--  &lt;!&ndash; 最新的 Bootstrap4 核心 JavaScript 文件 &ndash;&gt;-->
 <!--  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>-->
   <title>Personal Blog Admin</title>
@@ -62,27 +61,27 @@
         </div>
         <ul class="nav flex-column mt-3">
           <li class="nav-item">
-            <a class="nav-link active" href="#dashboard">
+            <a class="nav-link active" href="/dashboard" target="contentFrame" >
               Dashboard
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#publish">
+            <a class="nav-link" href="/publish" target="contentFrame">
               Publish Article
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#articles">
+            <a class="nav-link" href="/articles" target="contentFrame">
               Article Management
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#comments">
+            <a class="nav-link" href="/comments" target="contentFrame">
               Comment Management
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#permissions">
+            <a class="nav-link" href="/test" target="contentFrame">
               Permission Management
             </a>
           </li>
@@ -93,49 +92,12 @@
     <!-- 右边内容区域 -->
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <!-- 这里的标题元素不再写死，而是用一个 ID 来标识，以便通过 JavaScript 更新内容 -->
         <h1 id="page-title" class="h2">Dashboard</h1>
       </div>
-      <div id="dashboard" class="content-section active">
-        <!-- 动态加载的内容将显示在此处 -->
-      </div>
-      <div id="publish" class="content-section">
-        <!-- 动态加载的内容将显示在此处 -->
-      </div>
-      <div id="articles" class="content-section">
-        <!-- 动态加载的内容将显示在此处 -->
-      </div>
-      <div id="comments" class="content-section">
-        <!-- 动态加载的内容将显示在此处 -->
-      </div>
-      <div id="permissions" class="content-section">
-        <!-- 动态加载的内容将显示在此处 -->
-      </div>
-
+      <iframe id="contentFrame" name="contentFrame" src="" width="100%" height="500"></iframe>
     </main>
   </div>
 </div>
 
-<script src="../static/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!--一般是放在body底部，执行会更快，如果需要在一开始就加载则按情况而定-->
-<script>
-  const navLinks = document.querySelectorAll('.nav-link');
-  const contentContainer = document.getElementById('dashboard'); // 用于加载内容的容器
-  const pageTitle = document.getElementById('page-title');
-
-  navLinks.forEach(link => {
-    link.addEventListener('click', async function (e) {
-      e.preventDefault();
-
-      const targetId = this.getAttribute('href').substring(1);
-      const response = await fetch("/" + targetId); // 获取外部内容
-      const content = await response.text();
-
-      contentContainer.innerHTML = content; // 加载获取的内容
-
-      pageTitle.textContent = this.textContent;
-    });
-  });
-</script>
 </body>
 </html>

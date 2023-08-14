@@ -45,7 +45,7 @@ public class UserController {
     @RequestMapping("/articles")
     public String art(){
         System.out.println("跳转到创建文章界面");
-        return "articles";
+        return "/articles";
     }
 
     @RequestMapping("/test")
