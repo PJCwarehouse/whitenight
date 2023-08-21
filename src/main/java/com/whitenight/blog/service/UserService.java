@@ -2,10 +2,10 @@ package com.whitenight.blog.service;
 
 import com.whitenight.blog.entity.UserEntity;
 import com.whitenight.blog.mapper.UserMapper;
-import org.springframework.stereotype.Service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
@@ -21,10 +21,31 @@ public class UserService implements UserDetailsService {
     }
 
     public void Insert(String username, String password) {
-        System.out.println("sign:" + username + password);
-
         userMapper.saveInfo(username, password);
     }
+
+//    public int getAuthorityId(int id){
+//      return userMapper.getAuthorityId(id);
+//    }
+
+//    public Collection<? extends GrantedAuthority> getAuthorities(int id) {
+//        int authorityId = userMapper.getAuthorityId(id);
+//        String authority = "ROLE_admin";
+//        System.out.println(authorityId);
+//
+//        if(authorityId == 1){
+//            authority = "ROLE_admin";
+//        } else if (authorityId == 2) {
+//            authority = "ROLE_visitor";
+//        }
+//        List<GrantedAuthority> authorities = new ArrayList<>();
+//        authorities.add(new SimpleGrantedAuthority(authority));
+//
+//        return authorities;
+//    }
+
+
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -37,7 +58,6 @@ public class UserService implements UserDetailsService {
         if (entity == null) {
             throw new UsernameNotFoundException("用户不存在");
         }
-//        System.out.println(entity);
         return entity;
     }
 }

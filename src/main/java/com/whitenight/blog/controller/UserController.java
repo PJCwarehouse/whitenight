@@ -1,4 +1,5 @@
 package com.whitenight.blog.controller;
+
 import com.whitenight.blog.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -38,28 +39,26 @@ public class UserController {
 
     @RequestMapping("/management")
     public String man(){
-        System.out.println("跳转到管理界面");
+        System.out.println("跳转到管理界面");//这里会跳两次，奇怪
         return "/management";
     }
 
     @RequestMapping("/articles")
     public String art(){
         System.out.println("跳转到创建文章界面");
-        return "/articles";
+        return "articles publish";
     }
 
     @RequestMapping("/test")
     public String test(){
-        System.out.println("跳转到管理界面");
+        System.out.println("测试");
         return "/test";
     }
-
 
     //实现注册功能
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String signUp(String username, String password){
-        System.out.println("调用register");
-
+        System.out.println("sign:" + "/n" + username+ "/n" + password);
         userService.Insert(username, password);
         return "success";
     }

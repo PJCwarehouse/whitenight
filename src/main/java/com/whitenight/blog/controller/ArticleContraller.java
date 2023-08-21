@@ -1,0 +1,56 @@
+package com.whitenight.blog.controller;
+
+import com.whitenight.blog.entity.ArticleEntity;
+import com.whitenight.blog.service.ArticleService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+@Controller
+public class ArticleContraller {
+    @Resource
+    ArticleService articleService;
+
+    @RequestMapping(value = "/deposit",method = RequestMethod.POST)
+    public String deposit(String title, String content){
+        articleService.Insert(title,content);
+        System.out.println("成功发布文章");
+        return "success";
+    }
+
+    @RequestMapping(value = "/index",method = RequestMethod.GET)
+    public String index(Model model){
+        List<ArticleEntity> articles = articleService.selectAllArticles();
+        model.addAttribute("articles", articles);
+        System.out.println("进入首页");
+        return "index";
+    }
+
+    @RequestMapping(value = "/toArticle",method = RequestMethod.GET)
+    //只需要从服务器获取数据而不做任何修改时，使用 GET 是合适的。例如，获取文章列表、用户信息等。GET 请求通常被缓存，这有助于提高性能。
+    public String toArticle(@RequestParam(name = "articleID") int id, Model model){
+        //使用 @RequestParam 注解来获取名为 articleID 的参数值，并通过这个值从数据库中获取相应的文章实体。
+        ArticleEntity articleEntity = articleService.selectArticlesById(id);
+        model.addAttribute("article", articleEntity);
+//        传入后就可以直接使用${article.id}、${article.title} 和 ${article.content}访问文章属性
+//        model.addAttribute("article.id", articleEntity.getId());
+//        model.addAttribute("article.title", articleEntity.getTitle());
+//        model.addAttribute("article.content", articleEntity.getContent());
+
+        return "/article";
+    }
+
+
+
+//    @RequestMapping("/article")
+//    public String article(){
+//        System.out.println("转到文章界面");
+//        return "/article";
+//    }
+
+}

@@ -14,10 +14,9 @@ public interface UserMapper {
     @Select("SELECT * FROM users WHERE username = #{username}")
     UserEntity getInfoByUserName(@Param("username") String username);
 
-    @Select("select u.username,a.authority from t_user u,t_authority a," +
-            "t_user_authority ua where ua.user_id=u.id " +
-            "and ua.authority_id=a.id and u.username =?")
-    UserEntity hasAuthorities(@Param("username") String username);
+//    @Select("SELECT a.id FROM users u,authority a,user_authority ua " +
+//            "WHERE u.id = #{id} and u.id = ua.user_id and a.id = ua.authority_id")
+//    int getAuthorityId(@Param("id") int id);
 
     @Insert("insert into users(username,password)values(#{username},#{password})")
     void saveInfo(@Param("username") String username, @Param("password") String password);

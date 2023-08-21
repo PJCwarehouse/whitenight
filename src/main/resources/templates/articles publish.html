@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博客编辑页</title>
+    <!-- <script src="js/jquery.min.js"></script> -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.3/jquery.min.js"></script><!--    微软jquery压缩版引用地址-->
+
+    <!-- 引入 editor.md 的依赖 -->
+    <link rel="stylesheet" href="../static/editor.md-master/css/editormd.min.css" />
+    <script src="../static/editor.md-master/lib/marked.min.js"></script>
+    <script src="../static/editor.md-master/lib/prettify.min.js"></script>
+    <script src="../static/editor.md-master/editormd.js"></script>
+    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
+    <style>
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .blog-edit-container {
+            width: 1000px;
+            height: calc(100% - 50px);
+            margin: 0 auto;
+        }
+
+        .blog-edit-container .title {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .blog-edit-container .title #title {
+            height: 40px;
+            width: 895px;
+            border: none;
+            padding-left: 5px;
+            font-size: 20px;
+            border-radius: 5px;
+            /* 去掉轮廓线 鼠标选中后无黑圈*/
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* 点击输入框 输入框不透明 */
+        .blog-edit-container .title #title:focus {
+            background-color: rgb(255, 255, 255);
+        }
+
+        .blog-edit-container .title #submit_button {
+            height: 40px;
+            width: 100px;
+            border-radius: 5px;
+            color: white;
+            background-color: orange;
+            border: none;
+        }
+
+        .blog-edit-container .title #submit_button:active {
+            background-color: #666;
+        }
+
+        .editor {
+            border-radius: 10px;
+            /* background-color: rgba(255, 255, 255, 0.7); */
+            opacity: 80%;
+        }
+
+    </style>
+</head>
+<body>
+
+<!--博客编辑区  -->
+<div class="blog-edit-container">
+    <!-- 标题编辑区 -->
+    <div class="title">
+        <input type="text" id="title" placeholder="请输入文章标题">
+        <button class="button button-block button-rounded button-action button-large" id="submit_button">确认提交</button>
+
+    </div>
+    <!-- 博客编辑器  id选择器为了和markdown对接-->
+    <div class="editor" id="editor">
+        <textarea id="my-editormd-markdown-doc" name="my-editormd-markdown-doc" style="display:none;"></textarea>
+        <!-- 注意：name属性的值-->
+        <textarea id="my-editormd-html-code" name="my-editormd-html-code" style="display:none;"></textarea>
+    </div>
+
+</div>
+<script type="text/javascript">
+    <!--为了让editor.md编辑器完整的显示出来-->
+    var editor;
+    $(function() {
+        editor = editormd("editor", {
+            // 这里的尺寸必须在这里设置. 设置样式会被 editormd 自动覆盖掉.
+            width: "100%",
+            // 设定编辑器高度
+            height: "calc(100% - 50px)",
+            // 编辑器中的初始内容
+
+            // markdown: "# 在这里写下一篇博客",
+            //研究一下为什么这里写上就会仅上传这句话
+
+            // 指定 editor.md 依赖的插件路径
+            path: "../static/editor.md-master/lib/",
+            //设置为true表示将HTML内容保存到textarea中。
+            saveHTMLToTextarea : true
+        });
+    });
+    <!--然后用ajax将编辑器中的md格式的数据提交到后台，存储在数据库中，有的人可能存储的是html格式的，也行，这个看你自己的选择了，不过存储.md格式还是要好一点-->
+    $("#submit_button").click(function () {
+        $.ajax({
+            type: "post",
+            url: "/deposit",
+            data: {
+                title: $("#title").val(),
+                content:$("#my-editormd-html-code").val(),
+
+            },
+            contentType: "application/x-www-form-urlencoded; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                // 在这里处理成功响应
+                console.log("AJAX 请求成功：", data);
+                // 你可以更新用户界面、显示成功消息，或执行其他操作
+            },
+            error: function () {
+                // 在这里处理错误响应
+                console.log("AJAX 请求失败");
+            }
+        });
+    });
+</script>
+<!--<script>-->
+<!--    var editor = editormd("editor", {-->
+<!--        // 这里的尺寸必须在这里设置. 设置样式会被 editormd 自动覆盖掉.-->
+<!--        width: "100%",-->
+<!--        // 设定编辑器高度-->
+<!--        height: "calc(100% - 50px)",-->
+<!--        // 编辑器中的初始内容-->
+<!--        markdown: "# 在这里写下一篇博客",-->
+<!--        // 指定 editor.md 依赖的插件路径-->
+<!--        path: "../static/editor.md-master/lib/"-->
+<!--    });-->
+<!--</script>-->
+</body>
+</html>

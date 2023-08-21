@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>博文</title>
+</head>
+<body>
+
+<h2><div th:text="${article.title}"></div> </h2>
+
+<!--该标签可以有格式的输出对应的字符串-->
+<pre th:text="${article.content}"></pre>
+
+</body>
+</html>

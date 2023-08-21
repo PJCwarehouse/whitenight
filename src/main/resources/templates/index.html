@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
     <title>首页</title>
 </head>
 <body>
@@ -10,5 +12,22 @@
 <a href="/home page">主页</a>
 <a href="/management">管理界面</a>
 <a href="/articles">创建文章</a>
+
+
+
+<h3>我的博客：</h3>
+
+        <form th:each="article : ${articles}" action="/toArticle" method="get"><!--提交方法也许需要换成post-->
+            <strong th:text="${article.id}"></strong>
+            <strong th:text="${article.title}"></strong>
+
+            <input name="articleID" th:value="${article.id}" hidden>
+            <input name="articleTitle" th:value="${article.title}" hidden>
+            <input type="submit" value="转到文章">
+        </form>
+
+
+
+
 </body>
 </html>

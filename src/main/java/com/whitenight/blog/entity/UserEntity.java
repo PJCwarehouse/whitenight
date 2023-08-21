@@ -1,5 +1,6 @@
 package com.whitenight.blog.entity;
 
+import com.whitenight.blog.service.UserService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,10 +11,16 @@ import java.util.Collection;
 
 public class UserEntity implements UserDetails {
 
+
     private int id;
     private String username;
     private String password;
-
+//    private UserService userService;
+//    public UserEntity(String username, UserService userService, int id) {
+//        this.username = username;
+//        this.userService = userService;
+//        this.id = id;
+//    }这儿有问题，解决了看能不能运行
     public void setUsername(String username) {
         this.username = username;
     }
@@ -25,6 +32,7 @@ public class UserEntity implements UserDetails {
     public int getId() {
         return id;
     }
+
     @Override
     public String getUsername() {
         return username;
@@ -35,8 +43,25 @@ public class UserEntity implements UserDetails {
         return password;
     }
 
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        Collection<GrantedAuthority> authorities = new ArrayList<>();
+//        String authority = "ROLE_visitor";
+//        int AuthorityId = userService.getAuthorityId(1);
+//        if(AuthorityId == 1){
+//            authority = "ROLE_admin";
+//        } else if (AuthorityId == 2) {
+//            authority = "ROLE_visitor";
+//        }
+//
+//        authorities.add(new SimpleGrantedAuthority(authority));//authorities需要GrantedAuthority类型
+//        return authorities;
+//    }
 
-
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        return userService.getAuthorities(this.getId());
+//    }
+//
 
     @Override
     public boolean isAccountNonExpired() {

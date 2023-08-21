@@ -38,7 +38,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()//表示开启权限设置
                 .antMatchers("login","/success","/error","/articles",
-                        "../lib/css/bootstrap.min.css","../bootstrap.bundle.min.js","/management").permitAll() //error 放开权限 ，不然登陆失败跳转不过来
+                        "../lib/css/bootstrap.min.css","../bootstrap.bundle.min.js","/management")
+                .permitAll() //error 放开权限 ，不然登陆失败跳转不过来
                 .antMatchers("/home page").hasAnyRole("visitor","admin")
                 .antMatchers("/signup").hasRole("admin")//数据库权限名加了ROLE前缀，这里用hasRole方便，不用hasAnyAuthority
                 .anyRequest().permitAll();//方便测试
@@ -54,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(new AuthenticationSuccessHandler() {
                     @Override
                     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
-                        httpServletResponse.sendRedirect("/"); // 成功跳转到主页
+                        httpServletResponse.sendRedirect("/index"); // 成功跳转到主页
                     }
                 }).failureHandler(new AuthenticationFailureHandler() {
                     @Override
@@ -69,6 +70,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 }).permitAll() //这个permitAll的意思是 /login /loginIn 这两个接口不需要权限（不然未登录用户没法登录）
                 .and().csrf().disable();
 
+        super.configure(http);
+        http.headers().frameOptions().disable();
 
     }
 
@@ -77,5 +80,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         System.out.println("configure auth");
         auth.userDetailsService(userService).passwordEncoder(NoOpPasswordEncoder.getInstance());
     }
+
+
 
 }
