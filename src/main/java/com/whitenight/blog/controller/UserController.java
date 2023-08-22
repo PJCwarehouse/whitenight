@@ -43,15 +43,10 @@ public class UserController {
         return "/management";
     }
 
-    @RequestMapping("/articles")
-    public String art(){
-        System.out.println("跳转到创建文章界面");
-        return "articles publish";
-    }
 
     @RequestMapping("/test")
     public String test(){
-        System.out.println("测试");
+//        System.out.println("测试");
         return "/test";
     }
 

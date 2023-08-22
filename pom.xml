@@ -75,6 +75,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>com.atlassian.commonmark</groupId>
+			<artifactId>commonmark</artifactId>
+			<version>0.14.0</version> <!-- 使用合适的版本号 -->
+		</dependency>
+
+
 	</dependencies>
 
 	<build>

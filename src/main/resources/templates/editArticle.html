@@ -79,17 +79,21 @@
 <div class="blog-edit-container">
     <!-- 标题编辑区 -->
     <div class="title">
-        <input type="text" id="title" placeholder="请输入文章标题">
+        <input type="text" id="title" th:value="${article.title}" placeholder="请输入文章标题">
+        <input id="articleID" th:value="${article.id}" hidden>
         <button class="button button-block button-rounded button-action button-large" id="submit_button">确认提交</button>
 
     </div>
     <!-- 博客编辑器  id选择器为了和markdown对接-->
     <div class="editor" id="editor">
-        <textarea id="my-editormd-markdown-doc" name="my-editormd-markdown-doc" style="display:none;"></textarea>
-        <!-- 注意：name属性的值-->
-        <textarea id="my-editormd-html-code" name="my-editormd-html-code" style="display:none;"></textarea>
-    </div>
+    <textarea id="my-editormd-markdown-doc" name="my-editormd-markdown-doc" style="display:none;">
+        <pre th:utext="${article.content}"></pre></textarea>
+        <textarea id="my-editormd-html-code" name="my-editormd-html-code" style="display:none;">
 
+    </textarea>
+    </div>
+<!--    editor.md 编辑器会自动将用户编辑的 Markdown 内容和其转化出的 HTML 内容写入两个不同的隐藏的 <textarea> 中。-->
+<!--    这样做的目的是为了方便在需要时获取这些内容并将其提交到服务器进行处理。-->
 </div>
 <script type="text/javascript">
     <!--为了让editor.md编辑器完整的显示出来-->
@@ -115,8 +119,9 @@
     $("#submit_button").click(function () {
         $.ajax({
             type: "post",
-            url: "/deposit",
+            url: "/updateArticle",
             data: {
+                id:$("#articleID").val(),
                 title: $("#title").val(),
                 content:$("#my-editormd-html-code").val(),
 

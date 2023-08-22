@@ -1,10 +1,8 @@
 package com.whitenight.blog.mapper;
 
 import com.whitenight.blog.entity.ArticleEntity;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
+
 import java.util.List;
 
 @Mapper
@@ -17,4 +15,11 @@ public interface ArticleMapper {
 
     @Select("select * from article where id = #{id}")
     ArticleEntity selectArticlesById(@Param("id") int id);
+
+    @Delete("delete from article where id = #{id}")
+    void deleteArticle(@Param("id") int articleID);
+
+    @Update("UPDATE article SET title = #{title}, content = #{content} WHERE id = #{id}")
+    void updateArticle(@Param("id") int id, @Param("title") String newTitle, @Param("content") String newContent);
+
 }

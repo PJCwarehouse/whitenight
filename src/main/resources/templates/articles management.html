@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div  th:each="article : ${articles}">
+    <form action="/toArticle" method="get"><!--提交方法也许需要换成post-->
+        <strong th:text="${article.id}"></strong>
+        <strong th:text="${article.title}"></strong>
+
+        <input name="articleID" th:value="${article.id}" hidden>
+        <input name="articleTitle" th:value="${article.title}" hidden>
+        <input type="submit" value="查看文章">
+    </form>
+
+    <form action="/editArticle" method="get">
+        <input name="articleID" th:value="${article.id}" hidden>
+        <input type="submit" value="编辑文章">
+    </form>
+
+
+    <form action="/deleteArticle">
+        <input name="articleID" th:value="${article.id}" hidden>
+        <input type="submit" value="删除文章">
+    </form>
+
+</div>
+</body>
+</html>

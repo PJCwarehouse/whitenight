@@ -6,10 +6,10 @@
 </head>
 <body>
 
-<h2><div th:text="${article.title}"></div> </h2>
+<h2><div th:text="${title}"></div> </h2>
 
 <!--该标签可以有格式的输出对应的字符串-->
-<pre th:text="${article.content}"></pre>
+<pre th:utext="${content}"></pre>
 
 </body>
 </html>
