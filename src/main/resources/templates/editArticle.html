@@ -129,16 +129,19 @@
             contentType: "application/x-www-form-urlencoded; charset=utf-8",
             dataType: "json",
             success: function (data) {
-                // 在这里处理成功响应
-                console.log("AJAX 请求成功：", data);
-                // 你可以更新用户界面、显示成功消息，或执行其他操作
-                return "success";
+                if (data.status === "success") {
+                    // 操作成功，执行相应的操作
+                    window.location.href = "success";
+                    //controller层定义访问success即可返回success.html，所以这里不需要使用路径“success.html”
+                } else {
+                    console.log("操作失败或服务器返回无效数据");
+                    window.location.href = "error";
+                }
             },
             error: function () {
                 // 在这里处理错误响应
                 console.log("AJAX 请求失败");
-                return "success";
-
+                window.location.href = "error";
             }
         });
     });

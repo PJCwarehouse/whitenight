@@ -9,9 +9,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class ArticleContraller{
@@ -25,10 +28,14 @@ public class ArticleContraller{
     }
 
     @RequestMapping(value = "/deposit",method = RequestMethod.POST)
-    public String deposit(String title, String content){
-        articleService.Insert(title,content);
+    @ResponseBody // 添加这个注解以将返回值作为响应的主体
+    public Map<String, String> deposit(String title, String content){
+        articleService.Insert(title, content);
         System.out.println("成功发布文章");
-        return "/success";
+
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "success");
+        return response;
     }
 
     @RequestMapping(value = "/index",method = RequestMethod.GET)
@@ -91,9 +98,13 @@ public class ArticleContraller{
 
     //更新文章
     @RequestMapping(value = "/updateArticle")
-    public void updateArticle(int id,String title, String content){
+    @ResponseBody // 添加这个注解以将返回值作为响应的主体
+    public Map<String, String> updateArticle(int id,String title, String content){
         articleService.updateArticle(id,title,content);
 
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "success");
+        return response;
     }
 
 

@@ -85,7 +85,9 @@
     </div>
     <!-- 博客编辑器  id选择器为了和markdown对接-->
     <div class="editor" id="editor">
-        <textarea id="my-editormd-markdown-doc" name="my-editormd-markdown-doc" style="display:none;"></textarea>
+        <textarea id="my-editormd-markdown-doc" name="my-editormd-markdown-doc" style="display:none;">
+        # 在这里写下一篇博客
+        </textarea>
         <!-- 注意：name属性的值-->
         <textarea id="my-editormd-html-code" name="my-editormd-html-code" style="display:none;"></textarea>
     </div>
@@ -102,7 +104,7 @@
             height: "calc(100% - 50px)",
             // 编辑器中的初始内容
 
-            // markdown: "# 在这里写下一篇博客",
+            // markdown: " 在这里写下一篇博客",
             //研究一下为什么这里写上就会仅上传这句话
 
             // 指定 editor.md 依赖的插件路径
@@ -124,16 +126,19 @@
             contentType: "application/x-www-form-urlencoded; charset=utf-8",
             dataType: "json",
             success: function (data) {
-                // 在这里处理成功响应
-                console.log("AJAX 请求成功：", data);
-                // 你可以更新用户界面、显示成功消息，或执行其他操作
-                return "success";
+                if (data.status === "success") {
+                    // 操作成功，执行相应的操作
+                    window.location.href = "success";
+                    //controller层定义访问success即可返回success.html，所以这里不需要使用路径“success.html”
+                } else {
+                    console.log("操作失败或服务器返回无效数据");
+                    window.location.href = "error";
+                }
             },
             error: function () {
                 // 在这里处理错误响应
                 console.log("AJAX 请求失败");
-                return "success";
-
+                window.location.href = "error";
             }
         });
     });
