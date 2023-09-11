@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -45,8 +46,6 @@ public class UserService implements UserDetailsService {
 //    }
 
 
-
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 在此处根据用户名从数据库中获取用户信息并返回UserDetails对象
@@ -55,9 +54,9 @@ public class UserService implements UserDetailsService {
         // 示例代码如下，具体根据您的实际数据库结构和逻辑来实现
         System.out.println("username:" + username);
         UserEntity entity = userMapper.getInfoByUserName(username);
-        if (entity == null) {
-            throw new UsernameNotFoundException("用户不存在");
-        }
+        List<String> authorties = userMapper.getAuthoritiesByUserId(entity.getId());
+        System.out.println("authorties=" + authorties.get(0));
+        entity.setUserAuthorities(authorties);
         return entity;
     }
 }

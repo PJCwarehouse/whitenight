@@ -6,6 +6,9 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.Collection;
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
     @Select("SELECT * FROM users WHERE username = #{username} AND password = #{password}")
@@ -20,5 +23,9 @@ public interface UserMapper {
 
     @Insert("insert into users(username,password)values(#{username},#{password})")
     void saveInfo(@Param("username") String username, @Param("password") String password);
+
+
+    @Select("SELECT a.authority FROM users u,authority a,user_authority ua WHERE user_id = #{user_id} and a.id = ua.authority_id")
+    List<String> getAuthoritiesByUserId(@Param("user_id") int userId);
 }
 
