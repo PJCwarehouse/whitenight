@@ -55,7 +55,7 @@ public class UserService implements UserDetailsService {
         System.out.println("username:" + username);
         UserEntity entity = userMapper.getInfoByUserName(username);
         List<String> authorties = userMapper.getAuthoritiesByUserId(entity.getId());
-        System.out.println("authorties=" + authorties.get(0));
+        System.out.println("authorties=" + authorties.toString());
         entity.setUserAuthorities(authorties);
         return entity;
     }

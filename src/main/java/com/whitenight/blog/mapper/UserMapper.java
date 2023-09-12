@@ -25,7 +25,8 @@ public interface UserMapper {
     void saveInfo(@Param("username") String username, @Param("password") String password);
 
 
-    @Select("SELECT a.authority FROM users u,authority a,user_authority ua WHERE user_id = #{user_id} and a.id = ua.authority_id")
+    //@Select("SELECT a.authority FROM users u,authority a,user_authority ua WHERE user_id = #{user_id} and a.id = ua.authority_id") 为什么这条语句会有多个重复结果？
+    @Select("SELECT a.authority FROM users u,authority a,user_authority ua WHERE u.id = #{user_id} and u.id=ua.user_id and a.id = ua.authority_id")
     List<String> getAuthoritiesByUserId(@Param("user_id") int userId);
 }
 
