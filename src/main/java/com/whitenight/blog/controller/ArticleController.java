@@ -1,7 +1,11 @@
 package com.whitenight.blog.controller;
 
 import com.whitenight.blog.entity.ArticleEntity;
+import com.whitenight.blog.entity.CommentsEntity;
+import com.whitenight.blog.entity.UserEntity;
 import com.whitenight.blog.service.ArticleService;
+import com.whitenight.blog.service.CommentsService;
+import com.whitenight.blog.service.UserService;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.stereotype.Controller;
@@ -17,9 +21,14 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class ArticleContraller{
+public class ArticleController {
     @Resource
     ArticleService articleService;
+    @Resource
+    CommentsService commentsService;
+    @Resource
+    UserService userService;
+//    UserEntity userEntity;
     //进入发布文章界面
     @RequestMapping("/articles publish")
     public String art(){
@@ -60,15 +69,14 @@ public class ArticleContraller{
     //查看文章
     @RequestMapping(value = "/toArticle",method = RequestMethod.GET)
     //只需要从服务器获取数据而不做任何修改时，使用 GET 是合适的。例如，获取文章列表、用户信息等。GET 请求通常被缓存，这有助于提高性能。
-    public String toArticle(@RequestParam(name = "articleID") int id, Model model){
+    public String toArticle(@RequestParam(name = "articleId") int articleId, Model model){
         //使用 @RequestParam 注解来获取名为 articleID 的参数值，并通过这个值从数据库中获取相应的文章实体。
-        ArticleEntity articleEntity = articleService.selectArticlesById(id);
+        ArticleEntity articleEntity = articleService.selectArticlesById(articleId);
 //        model.addAttribute("article", articleEntity);
-
 //        传入后就可以直接使用${article.id}、${article.title} 和 ${article.content}访问文章属性
-//        model.addAttribute("article.id", articleEntity.getId());
+
+        model.addAttribute("articleId", articleEntity.getId());
         model.addAttribute("title", articleEntity.getTitle());
-//        model.addAttribute("article.content", articleEntity.getContent());
 
         // 使用 CommonMark 进行 Markdown to HTML 的转换
         String markdownContent = articleEntity.getContent();
@@ -77,6 +85,21 @@ public class ArticleContraller{
         String htmlContent = renderer.render(parser.parse(markdownContent));
 
         model.addAttribute("content", htmlContent);
+
+        List<CommentsEntity> commentsEntity = commentsService.selectAllCommentsByArticleId(articleId);
+
+        model.addAttribute("comments", commentsEntity);
+//        if (commentsEntity == null) {
+//            // 如果 commentsEntity 为空，创建一个空的评论列表
+//            commentsEntity = Collections.emptyList();
+//        }
+//        model.addAttribute("comments", commentsEntity);
+        int userid = userService.getId();
+        String username = userService.getUsername();
+        model.addAttribute("userid",userid);
+        model.addAttribute("username",username);
+
+
 
         return "/article";
     }
@@ -87,10 +110,14 @@ public class ArticleContraller{
         articleService.deleteArticle(articleID);
         return "success";
     }
+//    @RequestMapping(value = "/deleteArticle")返回值需要是个网页
+//    public void deleteArticle(@RequestParam(name = "articleID") int articleID){
+//        articleService.deleteArticle(articleID);
+//    }
 
     //进入编辑文章页面
     @RequestMapping(value = "/editArticle")
-    public String editArticle(@RequestParam(name = "articleID") int articleID,Model model){
+    public String editArticle(int articleID,Model model){
         ArticleEntity articleEntity = articleService.selectArticlesById(articleID);
         model.addAttribute("article",articleEntity);
         return "editArticle";
@@ -108,10 +135,6 @@ public class ArticleContraller{
     }
 
 
-//    @RequestMapping(value = "/deleteArticle")
-//    public void deleteArticle(@RequestParam(name = "articleID") int articleID){
-//        articleService.deleteArticle(articleID);
-//    }
 
 
 }

@@ -6,10 +6,37 @@
 </head>
 <body>
 
-<h2><div th:text="${title}"></div> </h2>
 
+
+<h2><div th:text="${title}"></div> </h2>
 <!--该标签可以有格式的输出对应的字符串-->
 <pre th:utext="${content}"></pre>
+
+
+<!-- 评论区域 -->
+<div id="comment-section">
+    <h3>评论区</h3>
+    <!-- 已有评论 -->
+    <div th:each="comment : ${comments}">
+        <span th:text="${comment.username}"></span>
+        <p th:text="${comment.content}"></p>
+    </div>
+
+
+    <!-- 新增评论输入框 -->
+    <form id="comment-form" action="/comment" method="post">
+        <input name = "userId" th:value="${userid}">
+        <input name = "username" th:value="${username}">
+        <input name="articleId" th:value="${articleId}" hidden>
+
+
+        <label for="comment-content">评论内容：</label>
+<!--        <input id="comment-content" name="content" placeholder="输入评论内容">-->
+
+        <textarea id="comment-content" name="content" placeholder="输入评论内容"></textarea>
+        <button type="submit">提交评论</button>
+    </form>
+</div>
 
 </body>
 </html>

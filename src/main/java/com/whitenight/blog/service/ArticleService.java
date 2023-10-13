@@ -3,7 +3,6 @@ package com.whitenight.blog.service;
 import com.whitenight.blog.entity.ArticleEntity;
 import com.whitenight.blog.mapper.ArticleMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -32,4 +31,10 @@ public class ArticleService {
     public void updateArticle(int id,String title, String content) {
         articleMapper.updateArticle(id,title,content);
     }
+
+
+//    public List<CommentsEntity> selectAllCommentsByArticleId(int articleId) {
+//        return articleMapper.selectAllCommentsByArticleId(articleId);
+//    }
+
 }

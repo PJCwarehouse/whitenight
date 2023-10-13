@@ -1,6 +1,7 @@
 package com.whitenight.blog.mapper;
 
 import com.whitenight.blog.entity.ArticleEntity;
+import com.whitenight.blog.entity.CommentsEntity;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -21,5 +22,6 @@ public interface ArticleMapper {
 
     @Update("UPDATE article SET title = #{title}, content = #{content} WHERE id = #{id}")
     void updateArticle(@Param("id") int id, @Param("title") String newTitle, @Param("content") String newContent);
+
 
 }

@@ -15,6 +15,14 @@ public class UserService implements UserDetailsService {
     //将dao层属性注入service层
     @Resource
     private UserMapper userMapper;
+    private String username;
+    private int id;
+    public String getUsername(){
+        return username;
+    }
+    public int getId(){
+        return id;
+    }
 
     public UserEntity LoginIn(String username, String password) {
         System.out.println("username,password");
@@ -54,6 +62,9 @@ public class UserService implements UserDetailsService {
         // 示例代码如下，具体根据您的实际数据库结构和逻辑来实现
         System.out.println("username:" + username);
         UserEntity entity = userMapper.getInfoByUserName(username);
+        this.username = username;
+        this.id = entity.getId();
+        System.out.println("获取用户名" + entity.getUsername());
         List<String> authorties = userMapper.getAuthoritiesByUserId(entity.getId());
         System.out.println("authorties=" + authorties.toString());
         entity.setUserAuthorities(authorties);
