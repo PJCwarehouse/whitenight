@@ -22,4 +22,9 @@ public class CommentsService {
     public void insert(int userId, String username,int articleId , String content) {
         commentMapper.insert(userId,username,articleId,content);
     }
+
+    public boolean deleteComment(int commentId) {
+        commentMapper.deleteCommentById(commentId);
+        return true;
+    }
 }

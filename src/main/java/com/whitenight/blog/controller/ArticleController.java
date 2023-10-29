@@ -76,7 +76,7 @@ public class ArticleController {
 //        传入后就可以直接使用${article.id}、${article.title} 和 ${article.content}访问文章属性
 
         model.addAttribute("articleId", articleEntity.getId());
-        model.addAttribute("title", articleEntity.getTitle());
+        model.addAttribute("title", articleEntity.getTitle());//获得当前文章的标题
 
         // 使用 CommonMark 进行 Markdown to HTML 的转换
         String markdownContent = articleEntity.getContent();
@@ -84,7 +84,7 @@ public class ArticleController {
         HtmlRenderer renderer = HtmlRenderer.builder().build();
         String htmlContent = renderer.render(parser.parse(markdownContent));
 
-        model.addAttribute("content", htmlContent);
+        model.addAttribute("articleContent", htmlContent);
 
         List<CommentsEntity> commentsEntity = commentsService.selectAllCommentsByArticleId(articleId);
 
@@ -101,12 +101,12 @@ public class ArticleController {
 
 
 
-        return "/article";
+        return "article";
     }
 
     //删除文章
     @RequestMapping(value = "/deleteArticle")
-    public String deleteArticle(@RequestParam(name = "articleID") int articleID){
+    public String deleteArticle(@RequestParam(name = "articleId") int articleID){
         articleService.deleteArticle(articleID);
         return "success";
     }
@@ -116,12 +116,20 @@ public class ArticleController {
 //    }
 
     //进入编辑文章页面
+//    @RequestMapping(value = "/editArticle")
+//    public String editArticle(@RequestParam(name = "articleID") int articleID,Model model){
+//        ArticleEntity articleEntity = articleService.selectArticlesById(articleID);
+//        model.addAttribute("article",articleEntity);
+//        return "editArticle";
+//    }
     @RequestMapping(value = "/editArticle")
-    public String editArticle(int articleID,Model model){
+    public String editArticle(@RequestParam(name = "articleId") int articleID, Model model) {
         ArticleEntity articleEntity = articleService.selectArticlesById(articleID);
-        model.addAttribute("article",articleEntity);
+        model.addAttribute("article", articleEntity);
         return "editArticle";
     }
+
+
 
     //更新文章
     @RequestMapping(value = "/updateArticle")

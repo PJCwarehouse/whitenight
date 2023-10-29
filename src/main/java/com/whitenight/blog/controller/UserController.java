@@ -28,26 +28,26 @@ public class UserController {
     @RequestMapping("/signup")
     public String disp(){
         System.out.println("跳转到注册页面");
-        return "/signup";
+        return "signup";
     }
 
     @RequestMapping("/home page")
     public String home(){
         System.out.println("跳转到主页");
-        return "/home page";
+        return "home page";
     }
 
     @RequestMapping("/management")
     public String man(){
         System.out.println("跳转到管理界面");//这里会跳两次，奇怪
-        return "/management";
+        return "management";
     }
 
 
     @RequestMapping("/test")
     public String test(){
 //        System.out.println("测试");
-        return "/test";
+        return "test";
     }
 
     //实现注册功能

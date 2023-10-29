@@ -1,11 +1,17 @@
 package com.whitenight.blog.controller;
 
 import com.whitenight.blog.service.CommentsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 public class CommentsController {
     @Resource
@@ -14,9 +20,31 @@ public class CommentsController {
     @RequestMapping(value = "/comment",method = RequestMethod.POST)
     public String comment(int userId,String username,int articleId,String content){
         commentsService.insert(userId,username,articleId,content);
-
-        return "/success";
+        System.out.println("用户id为" + userId + "的用户" + "在id为" + articleId + "文章中发布了评论，内容为:" + content);
+        return "success";
     }
+//    @DeleteMapping("/deleteComment")
+//    public String deleteComment(@RequestParam int commentId) {
+//        boolean isDeleted = commentsService.deleteComment(commentId);
+//
+//        if (isDeleted) {
+//            return "success"; //对于@DeleteMapping，通常不直接返回"success"或"error"这样的字符串
+//        } else {
+//            return "error"; //在RESTful架构中，DELETE请求应该返回适当的HTTP状态码，以指示操作的结果
+//        }
+//
+//    }
+@DeleteMapping("/deleteComment")
+public ResponseEntity<String> deleteComment(@RequestParam int commentId) {
+    boolean isDeleted = commentsService.deleteComment(commentId);
 
+    if (isDeleted) {
+        // 如果评论删除成功，返回HTTP状态码200和一个成功消息
+        return ResponseEntity.ok("评论删除成功");
+    } else {
+        // 如果删除失败，返回HTTP状态码404（或其他适当的错误状态码）和一个错误消息
+        return ResponseEntity.notFound().build();
+    }
+}
 
 }

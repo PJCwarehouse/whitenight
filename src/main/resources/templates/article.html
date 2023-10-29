@@ -3,25 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>博文</title>
+
+    <!-- 添加模态框的CSS样式和JavaScript库（示例为Bootstrap） -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
+<h2><div th:text="${title}"></div></h2>
+<pre th:utext="${articleContent}"></pre>
 
-
-
-<h2><div th:text="${title}"></div> </h2>
-<!--该标签可以有格式的输出对应的字符串-->
-<pre th:utext="${content}"></pre>
-
-
-<!-- 评论区域 -->
 <div id="comment-section">
     <h3>评论区</h3>
-    <!-- 已有评论 -->
     <div th:each="comment : ${comments}">
         <span th:text="${comment.username}"></span>
         <p th:text="${comment.content}"></p>
+        <button th:if="${comment.username == username}" class="delete-button" th:attr="data-comment-id=${comment.id}">删除</button>
     </div>
 
+    <!-- 模态框 HTML 结构 -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <p>确认删除此评论？</p>
+            <button id="confirmDelete">确认</button>
+            <button id="cancelDelete">取消</button>
+        </div>
+    </div>
 
     <!-- 新增评论输入框 -->
     <form id="comment-form" action="/comment" method="post">
@@ -31,12 +36,68 @@
 
 
         <label for="comment-content">评论内容：</label>
-<!--        <input id="comment-content" name="content" placeholder="输入评论内容">-->
+        <!--        <input id="comment-content" name="content" placeholder="输入评论内容">-->
 
         <textarea id="comment-content" name="content" placeholder="输入评论内容"></textarea>
         <button type="submit">提交评论</button>
     </form>
+
 </div>
 
+<!-- 添加JavaScript代码 -->
+<script>
+    // 获取删除按钮和模态框元素
+    const deleteButtons = document.querySelectorAll('.delete-button');
+    const deleteModal = document.getElementById('deleteModal');
+    const confirmDelete = document.getElementById('confirmDelete');
+    const cancelDelete = document.getElementById('cancelDelete');
+
+    let commentToDeleteId; // 保存要删除的评论的ID
+    console.log(commentToDeleteId);
+    // 点击删除按钮时，显示模态框
+    deleteButtons.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            commentToDeleteId = event.currentTarget.getAttribute('data-comment-id'); // 获取评论的唯一标识
+            deleteModal.style.display = 'block';
+        });
+    });
+
+    // 点击确认删除按钮
+    confirmDelete.addEventListener('click', () => {
+        // 使用XMLHttpRequest对象发送DELETE请求
+        const xhr = new XMLHttpRequest();
+        const url = `/deleteComment?commentId=${commentToDeleteId}`;
+        console.log(commentToDeleteId);
+
+        xhr.open('DELETE', url, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    // 成功删除评论，刷新页面或更新评论列表
+                    console.log('删除评论成功');
+                    location.reload(); // 重新加载页面
+                } else {
+                    // 处理删除失败的情况
+                    console.log(commentToDeleteId);
+                    console.log('删除评论失败');
+                }
+            }
+        };
+
+        xhr.send();
+        deleteModal.style.display = 'none'; // 关闭模态框
+    });
+
+    // 点击取消删除按钮或模态框外部，关闭模态框
+    cancelDelete.addEventListener('click', () => {
+        deleteModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === deleteModal) {
+            deleteModal.style.display = 'none';
+        }
+    });
+</script>
 </body>
 </html>
