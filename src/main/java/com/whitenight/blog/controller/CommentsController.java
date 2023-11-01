@@ -35,16 +35,17 @@ public class CommentsController {
 //
 //    }
 @DeleteMapping("/deleteComment")
-public ResponseEntity<String> deleteComment(@RequestParam int commentId) {
-    boolean isDeleted = commentsService.deleteComment(commentId);
+    public ResponseEntity<String> deleteComment(@RequestParam int commentId) {
+        boolean isCommentDeleted = commentsService.deleteComment(commentId);
 
-    if (isDeleted) {
-        // 如果评论删除成功，返回HTTP状态码200和一个成功消息
-        return ResponseEntity.ok("评论删除成功");
-    } else {
-        // 如果删除失败，返回HTTP状态码404（或其他适当的错误状态码）和一个错误消息
-        return ResponseEntity.notFound().build();
+        if (isCommentDeleted) {
+            // 如果评论删除成功，返回HTTP状态码200和一个成功消息
+            return ResponseEntity.ok("评论删除成功");
+        } else {
+            // 如果删除失败，返回HTTP状态码404（或其他适当的错误状态码）和一个错误消息
+            return ResponseEntity.notFound().build();
+        }
+
     }
-}
 
 }

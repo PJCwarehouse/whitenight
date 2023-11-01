@@ -20,8 +20,8 @@ public interface ArticleMapper {
     @Delete("delete from article where id = #{id}")
     void deleteArticle(@Param("id") int articleID);
 //删除文章时，由于文章id是评论的外键，所以要先删除文章对应的评论，再删除文章，此处把删除评论的sql语句写在commentMapper里面了
+
     @Update("UPDATE article SET title = #{title}, content = #{content} WHERE id = #{id}")
     void updateArticle(@Param("id") int id, @Param("title") String newTitle, @Param("content") String newContent);
-
 
 }

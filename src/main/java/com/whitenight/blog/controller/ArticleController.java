@@ -51,6 +51,10 @@ public class ArticleController {
     public String index(Model model){
         List<ArticleEntity> articles = articleService.selectAllArticles();
         model.addAttribute("articles", articles);
+
+        int userid = userService.getId();
+        model.addAttribute("userid",userid);
+
         System.out.println("进入首页");
         return "index";
     }

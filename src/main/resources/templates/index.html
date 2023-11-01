@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
 
     <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
+    <style>
+        /* 使用 CSS 来定位按钮在右上角 */
+        #logout-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+        }
+    </style>
     <title>首页</title>
 </head>
 <body>
@@ -14,20 +22,79 @@
 <a href="/articles publish">创建文章</a>
 <a href="/articles management">文章管理</a>
 
+<!-- 添加注销用户按钮 -->
+<form id="logout-form">
+    <input name="userId" th:value="${userid}" type="hidden">
+    <input type="button" id="logout-button" value="注销用户">
+</form>
+
+<!-- 模态框 HTML 结构 -->
+<div id="logoutModal" class="modal">
+    <div class="modal-content">
+        <p>确认注销用户？</p>
+        <button id="confirmLogout">确认</button>
+        <button id="cancelLogout">取消</button>
+    </div>
+</div>
 
 <h3>我的博客：</h3>
 
-        <form th:each="article : ${articles}" action="/toArticle" method="get"><!--提交方法也许需要换成post-->
-            <strong th:text="${article.id}"></strong>
-            <strong th:text="${article.title}"></strong>
+<form th:each="article : ${articles}" action="/toArticle" method="get">
+    <strong th:text="${article.id}"></strong>
+    <strong th:text="${article.title}"></strong>
 
-            <input name="articleId" th:value="${article.id}" hidden>
-            <input name="articleTitle" th:value="${article.title}" hidden>
-            <input type="submit" value="转到文章">
-        </form>
+    <input name="articleId" th:value="${article.id}" hidden>
+    <input name="articleTitle" th:value="${article.title}" hidden>
+    <input type="submit" value="转到文章">
+</form>
 
+<!-- 添加JavaScript代码 -->
+<script>
+    // 获取注销按钮和模态框元素
+    const logoutButton = document.getElementById('logout-button');
+    const logoutModal = document.getElementById('logoutModal');
+    const confirmLogout = document.getElementById('confirmLogout');
+    const cancelLogout = document.getElementById('cancelLogout');
+    const logoutForm = document.getElementById('logout-form');
 
+    // 点击注销按钮时，显示模态框
+    logoutButton.addEventListener('click', () => {
+        logoutModal.style.display = 'block';
+    });
 
+    // 点击确认注销按钮
+    confirmLogout.addEventListener('click', () => {
+        // 使用XMLHttpRequest对象发送请求到后端处理注销用户
+        const xhr = new XMLHttpRequest();
+        const url = `/deleteUser?userId=${logoutForm.querySelector('input[name="userId"]').value}`;
 
+        xhr.open('POST', url, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    // 注销成功，可以执行重定向或其他操作
+                    window.location.href = '/login'; // 重定向到首页
+                } else {
+                    // 注销失败，可以提示用户或进行其他处理
+                    console.log('注销用户失败');
+                }
+            }
+        };
+
+        xhr.send();
+        logoutModal.style.display = 'none'; // 关闭模态框
+    });
+
+    // 点击取消注销按钮或模态框外部，关闭模态框
+    cancelLogout.addEventListener('click', () => {
+        logoutModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === logoutModal) {
+            logoutModal.style.display = 'none';
+        }
+    });
+</script>
 </body>
 </html>

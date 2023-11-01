@@ -1,6 +1,8 @@
 package com.whitenight.blog.service;
 
 import com.whitenight.blog.entity.UserEntity;
+import com.whitenight.blog.mapper.ArticleMapper;
+import com.whitenight.blog.mapper.CommentMapper;
 import com.whitenight.blog.mapper.UserMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,6 +17,10 @@ public class UserService implements UserDetailsService {
     //将dao层属性注入service层
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private ArticleMapper articleMapper;
+    @Resource
+    private CommentMapper commentMapper;
     private String username;
     private int id;
     public String getUsername(){
@@ -69,6 +75,16 @@ public class UserService implements UserDetailsService {
         System.out.println("authorties=" + authorties.toString());
         entity.setUserAuthorities(authorties);
         return entity;
+    }
+
+    public boolean deleteUser(int userId) {
+        if(userId == 1){
+            return false;
+        }
+        commentMapper.deleteCommentByUserId(userId);
+        userMapper.deleteUser(userId);
+
+        return true;
     }
 }
 

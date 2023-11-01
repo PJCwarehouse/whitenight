@@ -1,10 +1,7 @@
 package com.whitenight.blog.mapper;
 
 import com.whitenight.blog.entity.UserEntity;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,5 +24,7 @@ public interface UserMapper {
             "WHERE u.id = #{user_id}")
     List<String> getAuthoritiesByUserId(@Param("user_id") int userId);
 
+    @Delete("delete from users where id = #{userId}")
+    void deleteUser(@Param("userId") int userId);
 }
 

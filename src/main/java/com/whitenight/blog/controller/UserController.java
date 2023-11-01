@@ -2,9 +2,12 @@ package com.whitenight.blog.controller;
 
 import com.whitenight.blog.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import javax.annotation.Resource;
 
 
@@ -56,6 +59,18 @@ public class UserController {
         System.out.println("sign:" + "/n" + username+ "/n" + password);
         userService.Insert(username, password);
         return "success";
+    }
+
+    //实现用户注销功能
+    @RequestMapping(value = "deleteUser",method = RequestMethod.POST)
+    public ResponseEntity<String> deleteUser(@RequestParam int userId){
+        boolean isUserDeleted = userService.deleteUser(userId);
+        if(isUserDeleted) {
+            return ResponseEntity.ok("用户删除成功");
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
     //实现登录
