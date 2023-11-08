@@ -1,32 +1,154 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-
+    <title>My Blog</title>
     <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
     <style>
-        /* 使用 CSS 来定位按钮在右上角 */
-        #logout-button {
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        header {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav li {
+            display: inline-block;
+            margin-right: 15px;
+        }
+
+        .blog-intro {
+            display: flex;
+            margin-top: 20px;
+            overflow-y: auto;
+            margin-bottom: 60px; /* 添加底部间距以避免挡住文章 */
+        }
+
+        .blog-intro-left {
+            width: 30%;
+            padding: 10px;
+            background-color: #f2f2f2;
+            margin-right: 10px;
+        }
+
+        .blog-intro-right {
+            width: 70%;
+            padding: 10px;
+        }
+
+        .blog-post {
+            max-height: 8em; /* 表示文章标题和文章内容与“转到文章”按钮共同拥有的行数 */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+        }
+
+        .blog-post-title {
+            color: rgba(255, 0, 242, 0.84); /* 设置您希望的标题颜色，可以使用颜色代码或名称 */
+        }
+
+
+        .article-content {
+            max-height: 3em; /* 表示文章内容拥有的行数，差距为5，刚好显示两行，且标题和按钮都不被压缩 */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+        }
+
+
+        footer {
             position: fixed;
-            top: 10px;
-            right: 10px;
+            bottom: 0;
+            background-color: #333;
+            color: #fff;
+            width: 100%;
+            padding: 10px;
+        }
+
+        /* 按钮和链接样式 */
+        a {
+            text-decoration: none;
+            color: #fff;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
         }
     </style>
-    <title>首页</title>
 </head>
 <body>
-<h1>欢迎来到首页</h1>
-<a href="/signup">注册</a>
-<a href="/home page">主页</a>
-<a href="/management">管理界面</a>
-<a href="/articles publish">创建文章</a>
-<a href="/articles management">文章管理</a>
+<header>
+    <nav>
+        <ul>
+            <li><a href="/signup">注册</a></li>
+            <li><a href="/home page">主页</a></li>
+            <li><a href="/management">管理界面</a></li>
+            <li><a href="/articles publish">创建文章</a></li>
+            <li><a href="/articles management">文章管理</a></li>
+        </ul>
+    </nav>
+    <h1>欢迎来到首页</h1>
+    <div>
+        <button id="logout-button">注销用户</button>
+    </div>
+</header>
 
-<!-- 添加注销用户按钮 -->
-<form id="logout-form">
-    <input name="userId" th:value="${userid}" type="hidden">
-    <input type="button" id="logout-button" value="注销用户">
-</form>
+<div class="blog-intro">
+    <div class="blog-intro-left">
+        <h2>About Me</h2>
+        <p>Welcome to my blog! I'm a passionate writer...</p>
+        <a href="#">Read More</a>
+    </div>
+    <div class="blog-intro-right">
+        <h2>我的博客：</h2>
+        <form th:each="article : ${articles}" action="/toArticle" method="get">
+            <div class="blog-post">
+                <h3 th:text="${article.title}" class="blog-post-title"></h3>
+                <div class="article-content" id="article-content-${article.id}">
+                    <p th:text="${article.content}"></p>
+                </div>
+                <input name="articleId" th:value="${article.id}" type="hidden">
+                <input type="submit" value="转到文章">
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<footer>
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Links</a></li>
+        </ul>
+    </nav>
+    <p>Contact: contact@example.com</p>
+</footer>
 
 <!-- 模态框 HTML 结构 -->
 <div id="logoutModal" class="modal">
@@ -37,18 +159,6 @@
     </div>
 </div>
 
-<h3>我的博客：</h3>
-
-<form th:each="article : ${articles}" action="/toArticle" method="get">
-    <strong th:text="${article.id}"></strong>
-    <strong th:text="${article.title}"></strong>
-
-    <input name="articleId" th:value="${article.id}" hidden>
-    <input name="articleTitle" th:value="${article.title}" hidden>
-    <input type="submit" value="转到文章">
-</form>
-
-<!-- 添加JavaScript代码 -->
 <script>
     // 获取注销按钮和模态框元素
     const logoutButton = document.getElementById('logout-button');
@@ -72,6 +182,8 @@
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
+                    // 注销成功，可以执行重定向或其他操作
+                    window.location.href = '/login'; //
                     // 注销成功，可以执行重定向或其他操作
                     window.location.href = '/login'; // 重定向到首页
                 } else {
