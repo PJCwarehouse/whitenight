@@ -14,7 +14,7 @@
 <div id="comment-section">
     <h3>评论区</h3>
     <div th:each="comment : ${comments}">
-        <span th:text="${comment.username}"></span>
+        <span th:text="${comment.username}" th:readonly="true"></span>
         <p th:text="${comment.content}"></p>
         <button th:if="${comment.username == username}" class="delete-button" th:attr="data-comment-id=${comment.id}">删除</button>
     </div>
@@ -31,7 +31,7 @@
     <!-- 新增评论输入框 -->
     <form id="comment-form" action="/comment" method="post">
         <input name = "userId" th:value="${userid}" hidden>
-        <input name = "username" th:value="${username}">
+        <input name = "username" th:value="${username}" th:readonly="true">
         <input name="articleId" th:value="${articleId}" hidden>
 
 

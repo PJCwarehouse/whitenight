@@ -78,7 +78,7 @@ public class UserController {
 
         System.out.println("注册用户:(username:" + username + ")");
 
-        return "success";
+        return "signupSuccess";
     }
 
     //实现用户注销功能

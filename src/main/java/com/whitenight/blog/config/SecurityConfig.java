@@ -40,12 +40,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
                 //强行把登录成功的跳转页面定位到https，不然会跳到http://www.masteryy.top/index
-//                .successHandler((httpServletRequest, httpServletResponse, authentication) -> {
-//                    httpServletResponse.sendRedirect("/index");
-//                })
                 .successHandler((httpServletRequest, httpServletResponse, authentication) -> {
-                    httpServletResponse.sendRedirect("https://www.masteryy.top/index");
+                    httpServletResponse.sendRedirect("/index");
                 })
+//                .successHandler((httpServletRequest, httpServletResponse, authentication) -> {
+//                    httpServletResponse.sendRedirect("https://www.masteryy.top/index");
+//                })
 
                 .failureHandler((httpServletRequest, httpServletResponse, e) -> {
                     log.error("Login failed: {}", e.getMessage());

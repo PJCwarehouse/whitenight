@@ -70,7 +70,9 @@
 
 <body>
 <div class="container">
-    <div class="msg" th:text="${errorMessage}" style="text-align: center; color: red;"></div>
+    <th:block>
+        <p th:text="${errorMessage}" style="color: red; text-align: center; font-size: 30px; position: fixed; top: 40px; left: 50%; transform: translateX(-50%);" >用户名已存在，注册失败</p>
+    </th:block>
     <div class="login-wrapper">
         <div class="header">注册</div>
         <div class="form-wrapper">
