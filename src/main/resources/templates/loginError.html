@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh">
-
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8">
   <title></title>
+  <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
   <style>
     * {
       margin: 0;
@@ -55,12 +55,18 @@
 
     .btn {
       padding: 10px;
-      text-align: center;
+      text-align:center;
       margin-top: 40px;
       background-image: linear-gradient(to right, #fbc2e1, #a6c1e1);
       color: #fff;
+      width:360px;
+      height: 50px;
     }
 
+    .msg {
+      text-align: center;
+      line-align: 88px;
+    }
 
     a {
       text-decoration-line: none;
@@ -70,18 +76,29 @@
 </head>
 
 <body>
-<div class="container">
-  <div class="login-wrapper">
-    <div class="header">注册</div>
-    <div class="form-wrapper">
-      <form role="form" action="/register" method="post">
 
-      <input type="text" name="username" placeholder="用户名" class="input-item">
-      <input type="password" name="password" placeholder="密码" class="input-item">
-        <input class="btn" type="submit" value="提交" >
-        </form>
+<div class="container">
+  <th:block>
+    <p style="color: red; text-align: center;">账号或密码错误，请重试。</p>
+  </th:block>
+  <div class="login-wrapper">
+    <div class="header">登录</div>
+    <div class="form-wrapper">
+      <form role="form" action="/login" method="post">
+        <input type="text" name="username"  placeholder="用户名" class="input-item">
+        <input type="password" name="password" placeholder="密码" class="input-item">
+        <input class="btn" type="submit" value="提交"  >
+      </form>
+    </div>
+
+    </br>
+    </br>
+    <div class="msg">
+      无账号？
+      <a href="/signup">注册</a>
     </div>
   </div>
+
 </div>
 </body>
 

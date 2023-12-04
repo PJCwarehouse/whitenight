@@ -30,7 +30,7 @@
 
     <!-- 新增评论输入框 -->
     <form id="comment-form" action="/comment" method="post">
-        <input name = "userId" th:value="${userid}">
+        <input name = "userId" th:value="${userid}" hidden>
         <input name = "username" th:value="${username}">
         <input name="articleId" th:value="${articleId}" hidden>
 

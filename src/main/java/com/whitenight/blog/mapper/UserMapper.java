@@ -16,7 +16,11 @@ public interface UserMapper {
 
 
     @Insert("insert into users(username,password)values(#{username},#{password})")
-    void saveInfo(@Param("username") String username, @Param("password") String password);
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")//想一想怎么能把自增的id取出来
+    void saveInfo(UserEntity entity);
+
+    @Insert("insert into user_authority(user_id,authority_id)values(#{user_id},#{authority_id})")
+    void saveInfoAuthority(@Param("user_id") int user_id, @Param("authority_id") int authority_id);
 
     @Select("SELECT a.authority FROM users u " +
             "INNER JOIN user_authority ua ON u.id = ua.user_id " +
@@ -26,5 +30,8 @@ public interface UserMapper {
 
     @Delete("delete from users where id = #{userId}")
     void deleteUser(@Param("userId") int userId);
+
+    @Delete("delete from user_authority where user_id = #{userId}")
+    void deleteUserAuthority(@Param("userId") int userId);
 }
 
