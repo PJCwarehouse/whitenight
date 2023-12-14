@@ -3,31 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/message.css"/>
+    <script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+    <script src="../static/bootstrap/js/message.js" type="text/javascript" charset="utf-8"></script>
+    <style>
+
+        #return-home {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            cursor: pointer;
+        }
+
+        #article {
+            width: 80%; /* 设置文章宽度为整体的80% */
+            margin-left: 10%; /* 将文章向右移动10% */
+        }
+
+        #management {
+            width: auto; /* 宽度设置为自动 */
+            margin-bottom: 5%; /* 设置上下间距为width的5% */
+        }
+
+        form {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-<div  th:each="article : ${articles}">
-        <form action="/toArticle" method="get"><!--提交方法也许需要换成post-->
+<a id="return-home" href="/index">返回主页</a>
+
+<div id="article" th:each="article : ${articles}">
+    <div id="management">
+        <form action="/toArticle" method="get">
             <strong th:text="${article.id}"></strong>
             <strong th:text="${article.title}"></strong>
-
-            </br>
-
+            <br>
             <input name="articleId" th:value="${article.id}" hidden>
             <input name="articleTitle" th:value="${article.title}" hidden>
             <input type="submit" value="查看文章">
         </form>
-
         <form action="/editArticle" method="get">
             <input name="articleId" th:value="${article.id}" hidden>
             <input type="submit" value="编辑文章">
         </form>
-
-
-        <form action="/deleteArticle">
-            <input name="articleId" th:value="${article.id}" hidden>
-            <input type="submit" value="删除文章">
-        </form>
-
+<!--        <form onsubmit="return confirmForm()">-->
+<!--            <input name="articleId" th:value="${article.id}" hidden>-->
+<!--            <input type="submit" value="删除文章">-->
+            <button onclick="confirm()">删除文章</button>
+<!--        </form>-->
     </div>
+</div>
+<script>
+    function confirmForm() {
+        // 执行你的确认逻辑
+        confirm();
+        // 阻止表单的默认提交行为
+        return false;
+    }
+    function confirm(){
+        $.confirm('确定删除该文件么?','提示信息',{
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+            define:function(){
+                $.message({content:'成功删除',time:2000})
+                deleteArticle();
+            },cancel:function(){
+                $.message({content:'取消删除',time:2000})
+            }
+        })
+    }
+    function deleteArticle() {
+        var articleIdInput = document.getElementsByName('articleId')[0];/* 获取 articleId 的逻辑，可能是从页面中获取 */;
+        var articleId = articleIdInput.value;
+        $.ajax({
+            type: "POST", // 或者其他 HTTP 方法，取决于你的控制器方法
+            url: "/deleteArticle",
+            data: { articleId: articleId },
+            success: function(response) {
+                // 处理成功的响应
+                console.log(response);
+                $.message({content:'成功删除',time:2000})
+                setTimeout(function ()
+                {window.location.href = "articles management";
+                }, 3000);
+            },
+            error: function(error) {
+                // 处理错误
+                console.error(error);
+            }
+        });
+    }
+</script>
 </body>
 </html>

@@ -64,7 +64,7 @@ public class UserService implements UserDetailsService {
         UserEntity entity = userMapper.getInfoByUserName(username);
         this.username = username;//通过登录信息获取username和id
         this.id = entity.getId();
-        System.out.println("获取用户名" + entity.getUsername());
+        System.out.println("当前登录用户名:" + entity.getUsername());
         List<String> authorties = userMapper.getAuthoritiesByUserId(entity.getId());
         System.out.println("authorties=" + authorties.toString());
         entity.setUserAuthorities(authorties);

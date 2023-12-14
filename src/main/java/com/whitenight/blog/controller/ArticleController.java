@@ -40,24 +40,31 @@ public class ArticleController {
     @ResponseBody // 添加这个注解以将返回值作为响应的主体
     public Map<String, String> deposit(String title, String content){
         articleService.Insert(title, content);
-        System.out.println("成功发布文章");
+        System.out.println("成功发布文章:" + title);
 
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
         return response;
     }
 
-    @RequestMapping(value = "/index",method = RequestMethod.GET)
-    public String index(Model model){
+    @RequestMapping(value = "/index", method = RequestMethod.GET)
+    public String index(@RequestParam(name = "SuccessSubmitted", required = false) String SuccessSubmitted, Model model) {
         List<ArticleEntity> articles = articleService.selectAllArticles();
         model.addAttribute("articles", articles);
 
         int userid = userService.getId();
-        model.addAttribute("userid",userid);
+        model.addAttribute("userid", userid);
+
+        // 使用 paramName，这里可以根据参数进行逻辑处理
+        if (SuccessSubmitted != null) {
+            model.addAttribute("SuccessSubmitted", SuccessSubmitted);
+            System.out.println("成功提交文章");
+        }
 
         System.out.println("进入首页");
         return "index";
     }
+
 
 
     //进入文章管理界面

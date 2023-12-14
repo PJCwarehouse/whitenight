@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.thymeleaf.util.StringUtils;
 
 import javax.annotation.Resource;
 
@@ -64,21 +65,27 @@ public class UserController {
     }
 
     //实现注册功能
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public String signUp(String username, String password, Model model){
+        if(StringUtils.isEmpty(username)){
+            System.out.println("用户名不能为空，请重新输入");
+            model.addAttribute("NullMessage", "用户名不能为空，请重新输入");
+            return "signup";
+        }
+
         UserEntity userEntity = userMapper.getInfoByUserName(username);
         if(userEntity != null){
             System.out.println("用户名已存在，注册失败");
-            model.addAttribute("errorMessage", "用户名已存在，注册失败");
-            return "signupError";
+            model.addAttribute("ErrorMessage", "用户名已存在，注册失败");
+            return "signup";
         }
         System.out.println("sign:" + "/n" + username+ "/n" + password);
 
         userService.Insert(username, password);
 
         System.out.println("注册用户:(username:" + username + ")");
-
-        return "signupSuccess";
+        model.addAttribute("SuccessSignMessage", "注册成功！");
+        return "login";
     }
 
     //实现用户注销功能

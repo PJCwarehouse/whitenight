@@ -2,3 +2,5 @@
 /.idea/*
 #排除target
 /target/*
+/docker-compose.yml
+/Dockerfile

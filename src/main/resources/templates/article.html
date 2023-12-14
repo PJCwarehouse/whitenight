@@ -6,10 +6,84 @@
 
     <!-- 添加模态框的CSS样式和JavaScript库（示例为Bootstrap） -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #return-home {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            cursor: pointer;
+        }
+        .article-container {
+            width: 60%;
+            margin: 0 auto; /* 居中 */
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        pre {
+            text-align: left;
+        }
+        #comment-section {
+            width: 60%;
+            margin: 0 auto; /* 居中 */
+        }
+
+
+        #deleteModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #4CAF50; /* 使用更鲜明的绿色 */
+            padding: 20px;
+            border: 1px solid #008C45; /* 更深的绿色边框 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content {
+            text-align: center;
+        }
+
+        .confirmation-text {
+            margin-bottom: 20px;
+            color: white; /* 设置文本颜色为白色 */
+        }
+
+        .confirm-button, .cancel-button {
+            padding: 8px 16px; /* 减半按钮长度 */
+            font-size: 14px; /* 设置按钮字体大小 */
+            cursor: pointer;
+            border: none;
+            color: white;
+            border-radius: 4px;
+        }
+
+        .confirm-button {
+            background-color: #008C45; /* 确认按钮颜色 */
+        }
+
+        .cancel-button {
+            background-color: #f44336; /* 取消按钮颜色 */
+            margin-left: 10px; /* 左边距增加一些间隔 */
+        }
+    </style>
 </head>
 <body>
-<h2><div th:text="${title}"></div></h2>
-<pre th:utext="${articleContent}"></pre>
+<a id="return-home" href="/index">返回主页</a>
+
+<div class="article-container">
+    <h2><div th:text="${title}"></div></h2>
+    <pre th:utext="${articleContent}"></pre>
+</div>
 
 <div id="comment-section">
     <h3>评论区</h3>
@@ -22,9 +96,9 @@
     <!-- 模态框 HTML 结构 -->
     <div id="deleteModal" class="modal">
         <div class="modal-content">
-            <p>确认删除此评论？</p>
-            <button id="confirmDelete">确认</button>
-            <button id="cancelDelete">取消</button>
+            <p class="confirmation-text">确认删除此评论？</p>
+            <button id="confirmDelete" class="confirm-button">确认</button>
+            <button id="cancelDelete" class="cancel-button">取消</button>
         </div>
     </div>
 
