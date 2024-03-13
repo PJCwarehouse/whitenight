@@ -1,9 +1,14 @@
 package com.whitenight.blog.entity;
 
+import java.util.Date;
+
 public class ArticleEntity {
         private int id;
         private String title;
         private String content;
+        private Date time;
+        private String author;
+        String thumbnail;
         public ArticleEntity() {
         }
         public ArticleEntity(String title, String content) {
@@ -34,5 +39,30 @@ public class ArticleEntity {
         public void setContent(String content) {
             this.content = content;
         }
+
+        public Date getTime() {
+        return time;
+        }
+
+        public void setTime(Date time) {
+        this.time = time;
+        }
+
+        public String getAuthor() {
+            return author;
+        }
+
+        public void setAuthor(String author) {
+            this.author = author;
+        }
+
+        public String getThumbnail() {
+            return thumbnail;
+        }
+
+        public void setThumbnail(String thumbnail) {
+            this.thumbnail = thumbnail;
+        }
+
 }
 

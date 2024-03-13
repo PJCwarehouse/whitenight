@@ -1,5 +1,6 @@
 package com.whitenight.blog.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.whitenight.blog.entity.ArticleEntity;
 import com.whitenight.blog.entity.CommentsEntity;
 import com.whitenight.blog.entity.UserEntity;
@@ -10,12 +11,10 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,10 +35,13 @@ public class ArticleController {
         return "articles publish";
     }
 
+    //发布文章
     @RequestMapping(value = "/deposit",method = RequestMethod.POST)
     @ResponseBody // 添加这个注解以将返回值作为响应的主体
     public Map<String, String> deposit(String title, String content){
-        articleService.Insert(title, content);
+        Date time = new Date();
+        String author = userService.getUsername();
+        articleService.Insert(title,content,time,author);
         System.out.println("成功发布文章:" + title);
 
         Map<String, String> response = new HashMap<>();
@@ -47,9 +49,12 @@ public class ArticleController {
         return response;
     }
 
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
-    public String index(@RequestParam(name = "SuccessSubmitted", required = false) String SuccessSubmitted, Model model) {
-        List<ArticleEntity> articles = articleService.selectAllArticles();
+    //发布文章后返回首页
+//    @RequestMapping(value = "/index", method = RequestMethod.GET)
+    @GetMapping(value = "/page/{p}")
+    public String index(@RequestParam(name = "SuccessSubmitted", required = false) String SuccessSubmitted,
+                        @PathVariable("p") int page, @RequestParam(value = "count", defaultValue = "5") int count, Model model) {
+        PageInfo<ArticleEntity> articles = articleService.selectArticleWithPage(page, count);
         model.addAttribute("articles", articles);
 
         int userid = userService.getId();
@@ -61,10 +66,9 @@ public class ArticleController {
             System.out.println("成功提交文章");
         }
 
-        System.out.println("进入首页");
+        System.out.println("分页获取文章信息: 页码 "+page+",条数 "+count);
         return "index";
     }
-
 
 
     //进入文章管理界面
@@ -83,11 +87,7 @@ public class ArticleController {
     public String toArticle(@RequestParam(name = "articleId") int articleId, Model model){
         //使用 @RequestParam 注解来获取名为 articleID 的参数值，并通过这个值从数据库中获取相应的文章实体。
         ArticleEntity articleEntity = articleService.selectArticlesById(articleId);
-//        model.addAttribute("article", articleEntity);
-//        传入后就可以直接使用${article.id}、${article.title} 和 ${article.content}访问文章属性
-
-        model.addAttribute("articleId", articleEntity.getId());
-        model.addAttribute("title", articleEntity.getTitle());//获得当前文章的标题
+        model.addAttribute("article", articleEntity);
 
         // 使用 CommonMark 进行 Markdown to HTML 的转换
         String markdownContent = articleEntity.getContent();
@@ -121,18 +121,9 @@ public class ArticleController {
         articleService.deleteArticle(articleID);
         return "success";
     }
-//    @RequestMapping(value = "/deleteArticle")返回值需要是个网页
-//    public void deleteArticle(@RequestParam(name = "articleID") int articleID){
-//        articleService.deleteArticle(articleID);
-//    }
+
 
     //进入编辑文章页面
-//    @RequestMapping(value = "/editArticle")
-//    public String editArticle(@RequestParam(name = "articleID") int articleID,Model model){
-//        ArticleEntity articleEntity = articleService.selectArticlesById(articleID);
-//        model.addAttribute("article",articleEntity);
-//        return "editArticle";
-//    }
     @RequestMapping(value = "/editArticle")
     public String editArticle(@RequestParam(name = "articleId") int articleID, Model model) {
         ArticleEntity articleEntity = articleService.selectArticlesById(articleID);

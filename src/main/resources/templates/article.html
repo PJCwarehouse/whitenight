@@ -3,26 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>博文</title>
+    <script th:src="@{../static/assets/js/jquery.min.js}"></script>
+    <script th:src="@{../static/assets/js/layer.js}"></script>
 
+    <link rel="shortcut icon" href="../static/user/img/bloglogo.jpg"/>
+    <link rel="apple-touch-icon" href="../static/user/img/apple-touch-icon.png"/>
+    <title><th:block th:text="${title ?: '首页'}"></th:block></title>
+    <link href="../static/user/css/xcode.min.css" rel="stylesheet"/>
+    <link href="../static/user/css/style.min.css" rel="stylesheet"/>
+    <script src="../static/assets/js/jquery.min.js"></script>
+    <script src="../static/assets/js/amazeui.min.js"></script>
+    <link rel="stylesheet" href="../static/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="../static/assets/css/app.css"/>
+
+    <!-- 按钮框链接-->
+    <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/message.css"/>
+    <script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+    <script src="../static/bootstrap/js/message.js" type="text/javascript" charset="utf-8"></script>
     <!-- 添加模态框的CSS样式和JavaScript库（示例为Bootstrap） -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
 
         #return-home {
             position: absolute;
-            top: 10px;
+            top: 90px;
             left: 10px;
             cursor: pointer;
         }
-        .article-container {
-            width: 60%;
-            margin: 0 auto; /* 居中 */
-        }
+
 
         h2 {
             text-align: center;
@@ -32,146 +40,229 @@
             text-align: left;
         }
         #comment-section {
-            width: 60%;
-            margin: 0 auto; /* 居中 */
-        }
-
-
-        #deleteModal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #4CAF50; /* 使用更鲜明的绿色 */
+            border: 1px solid #ccc;
             padding: 20px;
-            border: 1px solid #008C45; /* 更深的绿色边框 */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
         }
 
-        .modal-content {
-            text-align: center;
+        .comment-title {
+            font-size: 24px;
+            text-align: center; /* 将标题置于中间 */
         }
 
-        .confirmation-text {
+        .comment {
             margin-bottom: 20px;
-            color: white; /* 设置文本颜色为白色 */
         }
 
-        .confirm-button, .cancel-button {
-            padding: 8px 16px; /* 减半按钮长度 */
-            font-size: 14px; /* 设置按钮字体大小 */
-            cursor: pointer;
-            border: none;
+        .comment-content-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-content span {
+            font-weight: bold;
+        }
+
+        .delete-button {
+            background-color: #ff6666;
             color: white;
-            border-radius: 4px;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
         }
 
-        .confirm-button {
-            background-color: #008C45; /* 确认按钮颜色 */
+        .comment-input {
+            margin-top: 20px;
         }
 
-        .cancel-button {
-            background-color: #f44336; /* 取消按钮颜色 */
-            margin-left: 10px; /* 左边距增加一些间隔 */
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
     </style>
 </head>
+<div th:replace="/comm/header :: header"></div>
 <body>
-<a id="return-home" href="/index">返回主页</a>
+<a id="return-home" href="/page/1">返回主页</a>
 
-<div class="article-container">
-    <h2><div th:text="${title}"></div></h2>
-    <pre th:utext="${articleContent}"></pre>
-</div>
-
-<div id="comment-section">
-    <h3>评论区</h3>
-    <div th:each="comment : ${comments}">
-        <span th:text="${comment.username}" th:readonly="true"></span>
-        <p th:text="${comment.content}"></p>
-        <button th:if="${comment.username == username}" class="delete-button" th:attr="data-comment-id=${comment.id}">删除</button>
-    </div>
-
-    <!-- 模态框 HTML 结构 -->
-    <div id="deleteModal" class="modal">
-        <div class="modal-content">
-            <p class="confirmation-text">确认删除此评论？</p>
-            <button id="confirmDelete" class="confirm-button">确认</button>
-            <button id="cancelDelete" class="cancel-button">取消</button>
+<article class="main-content post-page">
+    <div class="post-header">
+        <h1 class="post-title" style="color: black; font-size: 2em; margin-top: 10px;" th:text="${article.title}"></h1>
+        <div class="post-data">
+            <time  itemprop="datePublished" th:text="'发布于 '+ ${article.time}"></time>
         </div>
     </div>
+    <br />
+    <div id="post-content" class="post-content content" th:utext="${articleContent}"></div>
+</article>
 
+<div id="comment-section">
+    <h3 class="comment-title">评论区</h3>
+    <div th:each="comment : ${comments}" class="comment">
+        <div class="comment-content-wrapper">
+            <div class="comment-content">
+                <span th:text="${comment.username}" th:readonly="true"></span>
+                <p th:text="${comment.content}"></p>
+            </div>
+            <button onclick="confirmDeleteComment(this)" th:if="${comment.username == username}" class="delete-button" th:attr="data-comment-id=${comment.id},data-article-id=${article.id}">删除</button>
+        </div>
+    </div>
     <!-- 新增评论输入框 -->
-    <form id="comment-form" action="/comment" method="post">
-        <input name = "userId" th:value="${userid}" hidden>
-        <input name = "username" th:value="${username}" th:readonly="true">
-        <input name="articleId" th:value="${articleId}" hidden>
-
-
+    <div class="comment-input">
         <label for="comment-content">评论内容：</label>
-        <!--        <input id="comment-content" name="content" placeholder="输入评论内容">-->
-
         <textarea id="comment-content" name="content" placeholder="输入评论内容"></textarea>
-        <button type="submit">提交评论</button>
-    </form>
-
+        <button onclick="confirmSubmitComments(this)" type="submit" th:attr="data-uesr-id=${userid},data-username=${username},data-article-id=${article.id}">提交评论</button>
+    </div>
 </div>
+
+
+
+
 
 <!-- 添加JavaScript代码 -->
 <script>
-    // 获取删除按钮和模态框元素
-    const deleteButtons = document.querySelectorAll('.delete-button');
-    const deleteModal = document.getElementById('deleteModal');
-    const confirmDelete = document.getElementById('confirmDelete');
-    const cancelDelete = document.getElementById('cancelDelete');
-
-    let commentToDeleteId; // 保存要删除的评论的ID
-    console.log(commentToDeleteId);
-    // 点击删除按钮时，显示模态框
-    deleteButtons.forEach((button) => {
-        button.addEventListener('click', (event) => {
-            commentToDeleteId = event.currentTarget.getAttribute('data-comment-id'); // 获取评论的唯一标识
-            deleteModal.style.display = 'block';
-        });
-    });
-
-    // 点击确认删除按钮
-    confirmDelete.addEventListener('click', () => {
-        // 使用XMLHttpRequest对象发送DELETE请求
-        const xhr = new XMLHttpRequest();
-        const url = `/deleteComment?commentId=${commentToDeleteId}`;
-        console.log(commentToDeleteId);
-
-        xhr.open('DELETE', url, true);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    // 成功删除评论，刷新页面或更新评论列表
-                    console.log('删除评论成功');
-                    location.reload(); // 重新加载页面
-                } else {
-                    // 处理删除失败的情况
-                    console.log(commentToDeleteId);
-                    console.log('删除评论失败');
-                }
+    function confirmSubmitComments(button) {
+        var uesrID = $(button).data("user-id");
+        var username = $(button).data("username");
+        var articleID = $(button).data("article-id");
+        var content = $("#comment-content").val(); // 获取评论内容
+        $.ajax({
+            type: "POST",
+            url: "/comment",
+            data: {
+                userId: uesrID, // 替换YOUR_USER_ID为实际值
+                username: username, // 替换YOUR_USERNAME为实际值
+                articleId: articleID,
+                content: content // 如果有必要，将评论内容填入此处
+            },
+            success: function(response) {
+                console.log(response);
+                $.message({content:'评论成功',time:2000})
+                setTimeout(function () {
+                    location.reload(); // 刷新当前页面;
+                }, 1000);
+            },
+            error: function(error) {
+                console.error(error);
             }
-        };
+        });
+    }
 
-        xhr.send();
-        deleteModal.style.display = 'none'; // 关闭模态框
-    });
+    function confirmDeleteComment(button) {
+        var commentID = $(button).data("comment-id");
 
-    // 点击取消删除按钮或模态框外部，关闭模态框
-    cancelDelete.addEventListener('click', () => {
-        deleteModal.style.display = 'none';
-    });
+        $.confirm('确定删除该评论么?','提示信息',{
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+            define: function() {
+                $.message({content:'成功删除',time:2000})
+                deleteComment(commentID); // 传递 commentID 给 deleteComment
+            },
+            cancel: function() {
+                $.message({content:'取消删除',time:2000})
+            }
+        })
+    }
 
-    window.addEventListener('click', (event) => {
-        if (event.target === deleteModal) {
-            deleteModal.style.display = 'none';
-        }
-    });
+    function deleteComment(commentID) {
+        $.ajax({
+            type: "POST",
+            url: "/deleteComment",
+            data: { commentId: commentID },
+            success: function(response) {
+                console.log(response);
+                // $.message({content:'成功删除',time:2000})
+                setTimeout(function () {
+                    location.reload(); // 刷新当前页面;
+                }, 1000);
+            },
+            error: function(error) {
+                console.error(error);
+            }
+        });
+    }
+
+
+
+
+    // // 获取删除按钮和模态框元素
+    // const deleteButtons = document.querySelectorAll('.delete-button');
+    // const deleteModal = document.getElementById('deleteModal');
+    // const confirmDelete = document.getElementById('confirmDelete');
+    // const cancelDelete = document.getElementById('cancelDelete');
+    //
+    // let commentToDeleteId; // 保存要删除的评论的ID
+    // console.log(commentToDeleteId);
+    // // 点击删除按钮时，显示模态框
+    // deleteButtons.forEach((button) => {
+    //     button.addEventListener('click', (event) => {
+    //         commentToDeleteId = event.currentTarget.getAttribute('data-comment-id'); // 获取评论的唯一标识
+    //         deleteModal.style.display = 'block';
+    //     });
+    // });
+    //
+    // // 点击确认删除按钮
+    // confirmDelete.addEventListener('click', () => {
+    //     // 使用XMLHttpRequest对象发送DELETE请求
+    //     const xhr = new XMLHttpRequest();
+    //     const url = `/deleteComment?commentId=${commentToDeleteId}`;
+    //     console.log(commentToDeleteId);
+    //
+    //     xhr.open('DELETE', url, true);
+    //     xhr.onreadystatechange = function () {
+    //         if (xhr.readyState === 4) {
+    //             if (xhr.status === 200) {
+    //                 // 成功删除评论，刷新页面或更新评论列表
+    //                 console.log('删除评论成功');
+    //                 location.reload(); // 重新加载页面
+    //             } else {
+    //                 // 处理删除失败的情况
+    //                 console.log(commentToDeleteId);
+    //                 console.log('删除评论失败');
+    //             }
+    //         }
+    //     };
+    //
+    //     xhr.send();
+    //     deleteModal.style.display = 'none'; // 关闭模态框
+    // });
+    //
+    // // 点击取消删除按钮或模态框外部，关闭模态框
+    // cancelDelete.addEventListener('click', () => {
+    //     deleteModal.style.display = 'none';
+    // });
+    //
+    // window.addEventListener('click', (event) => {
+    //     if (event.target === deleteModal) {
+    //         deleteModal.style.display = 'none';
+    //     }
+    // });
 </script>
 </body>
 </html>

@@ -31,7 +31,7 @@
     </style>
 </head>
 <body>
-<a id="return-home" href="/index">返回主页</a>
+<a id="return-home" href="/page/1">返回主页</a>
 
 <div id="article" th:each="article : ${articles}">
     <div id="management">
@@ -50,51 +50,48 @@
 <!--        <form onsubmit="return confirmForm()">-->
 <!--            <input name="articleId" th:value="${article.id}" hidden>-->
 <!--            <input type="submit" value="删除文章">-->
-            <button onclick="confirm()">删除文章</button>
+
+        <button onclick="confirm(this)" th:attr="data-articleid=${article.id}">删除文章</button>
 <!--        </form>-->
     </div>
 </div>
+
+<!-- 修改脚本部分 -->
 <script>
-    function confirmForm() {
-        // 执行你的确认逻辑
-        confirm();
-        // 阻止表单的默认提交行为
-        return false;
-    }
-    function confirm(){
+    function confirm(button) {
+        var articleId = $(button).data("articleid");
         $.confirm('确定删除该文件么?','提示信息',{
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning',
-            define:function(){
+            define: function() {
                 $.message({content:'成功删除',time:2000})
-                deleteArticle();
-            },cancel:function(){
+                deleteArticle(articleId); // 传递 articleId 给 deleteArticle
+            },
+            cancel: function() {
                 $.message({content:'取消删除',time:2000})
             }
         })
     }
-    function deleteArticle() {
-        var articleIdInput = document.getElementsByName('articleId')[0];/* 获取 articleId 的逻辑，可能是从页面中获取 */;
-        var articleId = articleIdInput.value;
+
+    function deleteArticle(articleId) {
         $.ajax({
-            type: "POST", // 或者其他 HTTP 方法，取决于你的控制器方法
+            type: "POST",
             url: "/deleteArticle",
             data: { articleId: articleId },
             success: function(response) {
-                // 处理成功的响应
                 console.log(response);
                 $.message({content:'成功删除',time:2000})
-                setTimeout(function ()
-                {window.location.href = "articles management";
+                setTimeout(function () {
+                    window.location.href = "articles management";
                 }, 3000);
             },
             error: function(error) {
-                // 处理错误
                 console.error(error);
             }
         });
     }
 </script>
+
 </body>
 </html>

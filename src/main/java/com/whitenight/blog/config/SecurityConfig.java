@@ -27,7 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "../lib/css/bootstrap.min.css","../bootstrap.bundle.min.js","/signup","/loginError","/register","/signupError","signupError")
                 .permitAll() //error 放开权限 ，不然登陆失败跳转不过来
                 .antMatchers("/home page").hasAnyRole("visitor","admin")
-                .antMatchers("/management").hasRole("admin");//数据库权限名加了ROLE前缀，这里用hasRole方便，不用hasAnyAuthority
+                .antMatchers("/management","/articles management").hasRole("admin");//数据库权限名加了ROLE前缀，这里用hasRole方便，不用hasAnyAuthority
 //                .anyRequest().permitAll();//方便测试
 //                .anyRequest().authenticated();
         //authenticated()要求在执行该请求时， 必须已经登录了应用。
@@ -42,23 +42,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 //强行把登录成功的跳转页面定位到https，不然会跳到http://www.masteryy.top/index
                 .successHandler((httpServletRequest, httpServletResponse, authentication) -> {
-                    httpServletResponse.sendRedirect("/index");
+                    httpServletResponse.sendRedirect("/page/1");
                 })
-//                .successHandler((httpServletRequest, httpServletResponse, authentication) -> {
-//                    httpServletResponse.sendRedirect("https://www.masteryy.top/index");
-//                })
-
                 .failureHandler((httpServletRequest, httpServletResponse, e) -> {
-                    log.error("Login failed: {}", e.getMessage());
-                    httpServletResponse.sendRedirect("/loginError"); // 失败跳error
-//                        String errorMessage = "用户名或密码错误，请重试"; // 自定义错误消息，之后在html界面利用Thymeleaf设置一下，使其显示在网页上
-//                        httpServletRequest.getSession().setAttribute("errorMessage", errorMessage);
-//                        // 将用户重定向到登录页面并显示错误消息
-//                        httpServletResponse.sendRedirect("/login");
-
+                    httpServletResponse.sendRedirect("/loginError"); // 失败跳loginError
                 })
                 .permitAll() //这个permitAll的意思是 /login /loginIn 这两个接口不需要权限（不然未登录用户没法登录）
                 .and().csrf().disable();
+        http.exceptionHandling()
+                .accessDeniedHandler((httpServletRequest, httpServletResponse, e) -> {
+                    httpServletResponse.sendRedirect("/NoPermissions");
+                });
 
         super.configure(http);
         http.headers().frameOptions().disable();

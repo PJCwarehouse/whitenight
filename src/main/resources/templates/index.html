@@ -1,171 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>My Blog</title>
-    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-        }
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-        header {
-            background-color: #007BFF;
-            color: #fff;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        nav ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        nav li {
-            display: inline-block;
-            margin-right: 15px;
-        }
-
-        #SuccessSubmitted {
-            color: red;
-            text-align: center;
-            font-size: 100px;
-            position: fixed;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 1; /* 初始时透明度为0 */
-            transition: opacity 0s; /* 添加透明度渐变的过渡效果，时长为1秒 */
-        }
-
-        .blog-intro {
-            display: flex;
-            margin-top: 20px;
-            overflow-y: auto;
-            margin-bottom: 60px; /* 添加底部间距以避免挡住文章 */
-        }
-
-        .blog-intro-left {
-            width: 30%;
-            padding: 10px;
-            background-color: #f2f2f2;
-            margin-right: 10px;
-        }
-
-        .blog-intro-right {
-            width: 70%;
-            padding: 10px;
-        }
-
-        .blog-post {
-            max-height: 8em; /* 表示文章标题和文章内容与“转到文章”按钮共同拥有的行数 */
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: normal;
-        }
-
-        .blog-post-title {
-            color: rgba(255, 0, 242, 0.84); /* 设置您希望的标题颜色，可以使用颜色代码或名称 */
-        }
-
-
-        .article-content {
-            max-height: 3em; /* 表示文章内容拥有的行数，差距为5，刚好显示两行，且标题和按钮都不被压缩 */
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: normal;
-        }
-
-
-        footer {
-            position: fixed;
-            bottom: 0;
-            background-color: #333;
-            color: #fff;
-            width: 100%;
-            padding: 1px 20px 1px 5px;
-
-        }
-
-        /* 按钮和链接样式 */
-        a {
-            text-decoration: none;
-            color: #fff;
-        }
-
-        button {
-            background-color: #007BFF;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            margin: 0 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
+<div th:replace="/comm/header :: header"></div>
 <body onload="fadeInAndOut()">
-<header>
-    <nav>
-        <ul>
-            <li><a href="/signup">注册</a></li>
-            <li><a href="/home page">主页</a></li>
-            <li><a href="/management">管理界面</a></li>
-            <li><a href="/articles publish">创建文章</a></li>
-            <li><a href="/articles management">文章管理</a></li>
-        </ul>
-    </nav>
-    <h1>欢迎来到首页</h1>
+<div id="SuccessSubmitted" th:if="${SuccessSubmitted}" th:text="${SuccessSubmitted}"></div>
 
-    <div th:if="${SuccessSubmitted}" th:text="${SuccessSubmitted}" id ="SuccessSubmitted">提交成功</div>
-
-    <div>
-        <button id="logout-button">注销用户</button>
-        <input id="logout-form" name = "userId" th:value="${userid}" hidden>
-    </div>
-</header>
-
-<div class="blog-intro">
-    <div class="blog-intro-left">
-        <h2>About Me</h2>
-        <p>Welcome to my blog! I'm a passionate writer...</p>
-        <a href="#">Read More</a>
-    </div>
-    <div class="blog-intro-right">
-        <h2>我的博客：</h2>
-        <form th:each="article : ${articles}" action="/toArticle" method="get">
-            <div class="blog-post">
-                <h3 th:text="${article.title}" class="blog-post-title"></h3>
-                <div class="article-content" id="article-content-${article.id}">
-                    <p th:text="${article.content}"></p>
-                </div>
-                <input name="articleId" th:value="${article.id}" type="hidden">
-                <input type="submit" value="转到文章">
+<div class="am-g am-g-fixed blog-fixed index-page">
+        <div class="am-u-md-8 am-u-sm-12">
+            <!-- 文章遍历并分页展示 -->
+            <div th:each="article: ${articles.list}">
+                <article class="am-g blog-entry-article">
+                    <div class="am-u-lg-6 am-u-md-12 am-u-sm-12 blog-entry-img">
+<!--                        <img width="100%" class="am-u-sm-12" th:src="@{${commons.show_thumb(article)}}"/>-->
+                        <img width="100%" class="am-u-sm-12" th:src="@{/static/user/img/rand/__${article.id%24}__.png}"/>
+                    </div>
+                    <div class="am-u-lg-6 am-u-md-12 am-u-sm-12 blog-entry-text">
+                        <!-- 文章分类 -->
+                        <span class="blog-color"style="font-size: 15px;"><a>默认分类</a></span>
+                        <span>&nbsp;&nbsp;&nbsp;</span>
+                        <!-- 发布时间 -->
+                        <span style="font-size: 15px;" th:text="'发布于 '+ ${article.time}" />
+                        <h2>
+                            <div>
+                                 <a style="color: #0f9ae0;font-size: 20px;" th:href="@{/toArticle(articleId=${article.id})}" th:text="${article.title}"  />
+                            </div>
+                        </h2>
+                        <!-- 文章摘要-->
+                        <div class="two-lines" style="font-size: 16px;" th:text="${article.content}" />
+                    </div>
+                </article>
             </div>
-        </form>
-    </div>
+            <!-- 文章分页信息 -->
+            <div class="am-pagination">
+                <div th:replace="/paging::pageNav(${articles},'上一页','下一页','page')" />
+            </div>
+        </div>
 
+
+        <!-- 博主信息描述 -->
+            <div class="am-u-md-4 am-u-sm-12 blog-sidebar">
+                <div class="blog-sidebar-widget blog-bor">
+                    <h2 class="blog-text-center blog-title"><span>WhiteNight</span></h2>
+                    <img th:src="@{/static/assets/img/me2.jpg}" alt="about me" class="blog-entry-img"/>
+                    <p>
+                        Java后台开发
+                    </p>
+                    <p>个人博客小站，主要发表关于Java、Spring、Linux等相关文章</p>
+                </div>
+                <div class="blog-sidebar-widget blog-bor">
+                    <h2 class="blog-text-center blog-title"><span>联系我</span></h2>
+                    <p>
+                        <a href="https://github.com/PJCwarehouse"><span class="am-icon-github am-icon-fw blog-icon"></span></a>
+                        <a href="https://blog.csdn.net/PJC2751607512"><span class="am-icon-copyright am-icon-fw blog-icon"></span></a>
+                        <a><span class="am-icon-qq am-icon-fw blog-icon"></span></a>
+                        <a><span class="am-icon-weixin am-icon-fw blog-icon"></span></a>
+                    </p>
+                </div>
+            </div>
 </div>
-
-<footer>
-    <nav>
-        <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Contact</a></li>
-            <li><a href="#">Links</a></li>
-        </ul>
-    </nav>
-    <p>Contact: contact@example.com</p>
+<footer class="myFooter">
+    <div class="footer-title">人生当苦无妨，良人当归即好。</div>
+    <div class="icp">© 2024 / 蜀ICP备2023028036号-1</div>
 </footer>
+
+<!--        <form th:each="article : ${articles}" action="/toArticle" method="get">-->
+<!--            <div class="blog-post">-->
+<!--                <h3 th:text="${article.title}" class="blog-post-title"></h3>-->
+<!--                <div class="article-content" id="article-content-${article.id}">-->
+<!--                    <p th:text="${article.content}"></p>-->
+<!--                </div>-->
+<!--                <input name="articleId" th:value="${article.id}" type="hidden">-->
+<!--                <input type="submit" value="转到文章">-->
+<!--            </div>-->
+<!--        </form>-->
 
 <!-- 模态框 HTML 结构 -->
 <div id="logoutModal" class="modal">
@@ -177,56 +84,55 @@
 </div>
 
 <script>
-    // 获取注销按钮和模态框元素
-    const logoutButton = document.getElementById('logout-button');
-    const logoutModal = document.getElementById('logoutModal');
-    const confirmLogout = document.getElementById('confirmLogout');
-    const cancelLogout = document.getElementById('cancelLogout');
-    const logoutForm = document.getElementById('logout-form');
-
-    // 点击注销按钮时，显示模态框
-    logoutButton.addEventListener('click', () => {
-        logoutModal.style.display = 'block';
-    });
-
-    // 点击确认注销按钮
-    confirmLogout.addEventListener('click', () => {
-        // 使用XMLHttpRequest对象发送请求到后端处理注销用户
-        const xhr = new XMLHttpRequest();
-        const url = `/deleteUser?userId=${document.querySelector('#logout-form').value}`;
-
-        xhr.open('POST', url, true);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    // 注销成功，可以执行重定向或其他操作
-                    window.location.href = '/login'; //
-                } else {
-                    // 注销失败，可以提示用户或进行其他处理
-                    console.log('注销用户失败');
-                }
-            }
-        };
-
-        xhr.send();
-        logoutModal.style.display = 'none'; // 关闭模态框
-    });
-
-    // 点击取消注销按钮或模态框外部，关闭模态框
-    cancelLogout.addEventListener('click', () => {
-        logoutModal.style.display = 'none';
-    });
-
-    window.addEventListener('click', (event) => {
-        if (event.target === logoutModal) {
-            logoutModal.style.display = 'none';
-        }
-    });
-
+    // // 获取注销按钮和模态框元素
+    // const logoutButton = document.getElementById('logout-button');
+    // const logoutModal = document.getElementById('logoutModal');
+    // const confirmLogout = document.getElementById('confirmLogout');
+    // const cancelLogout = document.getElementById('cancelLogout');
+    // const logoutForm = document.getElementById('logout-form');
+    //
+    // // 点击注销按钮时，显示模态框
+    // logoutButton.addEventListener('click', () => {
+    //     logoutModal.style.display = 'block';
+    // });
+    //
+    // // 点击确认注销按钮
+    // confirmLogout.addEventListener('click', () => {
+    //     // 使用XMLHttpRequest对象发送请求到后端处理注销用户
+    //     const xhr = new XMLHttpRequest();
+    //     const url = `/deleteUser?userId=${document.querySelector('#logout-form').value}`;
+    //
+    //     xhr.open('POST', url, true);
+    //     xhr.onreadystatechange = function () {
+    //         if (xhr.readyState === 4) {
+    //             if (xhr.status === 200) {
+    //                 // 注销成功，可以执行重定向或其他操作
+    //                 window.location.href = '/login'; //
+    //             } else {
+    //                 // 注销失败，可以提示用户或进行其他处理
+    //                 console.log('注销用户失败');
+    //             }
+    //         }
+    //     };
+    //
+    //     xhr.send();
+    //     logoutModal.style.display = 'none'; // 关闭模态框
+    // });
+    //
+    // // 点击取消注销按钮或模态框外部，关闭模态框
+    // cancelLogout.addEventListener('click', () => {
+    //     logoutModal.style.display = 'none';
+    // });
+    //
+    // window.addEventListener('click', (event) => {
+    //     if (event.target === logoutModal) {
+    //         logoutModal.style.display = 'none';
+    //     }
+    // });
 
     function fadeInAndOut() {
+        //SuccessSubmitted=文章提交成功！
         var SuccessSubmitted = document.getElementById('SuccessSubmitted');
-
         // 设置错误消息透明度为1
         SuccessSubmitted.style.opacity = 2;
 

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="header">
+    <meta charset="UTF-8">
+    <title>My Blog</title>
+    <!-- 样式表链接 -->
+    <link rel="stylesheet" href="../../static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../static/user/css/xcode.min.css">
+    <link rel="stylesheet" href="../../static/user/css/style.min.css">
+    <link rel="stylesheet" href="../../static/assets/css/amazeui.min.css">
+    <link rel="stylesheet" href="../../static/assets/css/app.css">
+    <!-- 图标链接 -->
+    <link rel="shortcut icon" href="../../static/assets/img/me2.jpg"/>
+    <link rel="apple-touch-icon" href="../../static/user/img/apple-touch-icon.png"/>
+
+    <!-- 按钮框链接-->
+    <link rel="stylesheet" type="text/css" href="../../static/bootstrap/css/message.css"/>
+    <script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+    <script src="../../static/bootstrap/js/message.js" type="text/javascript" charset="utf-8"></script>
+    <!-- Thymeleaf 代码 -->
+    <title><th:block th:text="${title ?: '首页'}"></th:block></title>
+
+    <!-- CSS 样式 -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            /*background-color: #f2f2f2;*/
+        }
+
+        header {
+            background-color: #36a7bb;
+            color: #fff;
+            padding: 20px 10px; /* 上下各增加 10px 的 padding */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav li {
+            display: inline-block;
+            margin-right: 15px;
+        }
+
+        h1 {
+            margin: 0;
+            color: #fff;
+            flex-grow: 1; /* 让标题占据剩余的空间 */
+            text-align: center; /* 居中对齐标题文本 */
+            display: flex; /* 将 h1 元素设置为 Flex 容器 */
+            justify-content: center; /* 将 h1 元素内部内容水平居中对齐 */
+        }
+
+        #logout-button {
+            margin-left: auto; /* 将按钮推到最左边 */
+        }
+
+        #SuccessSubmitted {
+            color: red;
+            text-align: center;
+            font-size: 100px;
+            position: fixed;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 1; /* 初始时透明度为0 */
+            transition: opacity 0s; /* 添加透明度渐变的过渡效果，时长为1秒 */
+        }
+
+        .two-lines {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+
+        button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 6px 14px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            border-radius: 6px;
+            border: none;
+
+            background: #6E6D70;
+            box-shadow: 0px 0.5px 1px rgba(0, 0, 0, 0.1), inset 0px 0.5px 0.5px rgba(255, 255, 255, 0.5), 0px 0px 0px 0.5px rgba(0, 0, 0, 0.12);
+            color: #DFDEDF;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        button:focus {
+            box-shadow: inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2), 0px 0.5px 1px rgba(0, 0, 0, 0.1), 0px 0px 0px 3.5px rgba(58, 108, 217, 0.5);
+            outline: 0;
+        }
+        button:hover {
+            background-color: rgba(163, 63, 173, 0.99);
+        }
+
+
+        .myFooter {
+            height: 80px; /* 设置页脚的高度 */
+            width: 100%; /* 保持宽度不变 */
+            border-radius: 10px;
+            font-family: MYFONT;   //自定义字体
+        font-size: 18px;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: colorChange 3s infinite linear;
+            color: #fff; /* 设置字体颜色为白色 */
+            display: flex; /* 设置为 Flex 容器 */
+            flex-direction: column; /* 垂直排列子元素 */
+            justify-content: center; /* 在主轴上居中显示子元素 */
+            align-items: center; /* 在交叉轴上居中显示子元素 */
+            overflow: hidden; /* 隐藏溢出内容 */
+        }
+
+        .myFooter .footer-title,
+        .myFooter .icp {
+            margin: 10px 0; /* 添加一些上下边距 */
+        }
+
+        @keyframes colorChange {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+    </style>
+</head>
+<body>
+<header>
+    <div>
+        <button onclick="confirmDeleteUser(this)" th:attr="data-userid=${userid}">注销用户</button>
+    </div>
+
+    <h1>WhiteNight的个人博客小站</h1>
+
+    <nav>
+        <ul>
+            <li><a href="/login">登录</a></li>
+            <li><a href="/signup">注册</a></li>
+            <li><a href="/articles publish">创建文章</a></li>
+            <li><a href="/articles management">文章管理</a></li>
+        </ul>
+    </nav>
+</header>
+<script>
+    function confirmDeleteUser(button) {
+        var userid = $(button).data("userid"); // 注意这里使用了小写的"data-userid"
+        $.confirm('确定注销用户么?','提示信息',{
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+            define: function() {
+                $.message({content:'成功注销',time:2000})
+                deleteUser(userid); // 传递 articleId 给 deleteArticle
+            },
+            cancel: function() {
+                $.message({content:'取消注销',time:2000})
+            }
+        })
+    }
+
+    function deleteUser(userid) {
+        $.ajax({
+            type: "POST",
+            url: "/deleteUser",
+            data: { userID: userid },
+            success: function(response) {
+                console.log(response);
+                $.message({content:'成功注销',time:2000})
+                setTimeout(function () {
+                    window.location.href = "https://localhost:8443/login";
+                }, 1000);
+            },
+            error: function(error) {
+                console.error(error);
+            }
+        });
+    }
+</script>
+</body>
+</html>

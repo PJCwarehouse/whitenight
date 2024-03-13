@@ -22,8 +22,8 @@ public class UserService implements UserDetailsService {
     private ArticleMapper articleMapper;
     @Resource
     private CommentMapper commentMapper;
-    private String username;
     private int id;
+    private String username;
     public String getUsername(){
         return username;
     }

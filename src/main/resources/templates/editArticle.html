@@ -86,8 +86,8 @@
     </div>
     <!-- 博客编辑器  id选择器为了和markdown对接-->
     <div class="editor" id="editor">
-    <textarea id="my-editormd-markdown-doc" name="my-editormd-markdown-doc" style="display:none;">
-        <pre th:utext="${article.content}"></pre></textarea>
+    <textarea id="my-editormd-markdown-doc" name="my-editormd-markdown-doc" style="display:none;" th:utext="${article.content}">
+       </textarea>
         <textarea id="my-editormd-html-code" name="my-editormd-html-code" style="display:none;">
 
     </textarea>
@@ -123,7 +123,7 @@
             data: {
                 id:$("#articleID").val(),
                 title: $("#title").val(),
-                content:$("#my-editormd-html-code").val(),
+                content:$("#my-editormd-markdown-doc").val(),
 
             },
             contentType: "application/x-www-form-urlencoded; charset=utf-8",
@@ -131,7 +131,7 @@
             success: function (data) {
                 if (data.status === "success") {
                     // 操作成功，执行相应的操作
-                    window.location.href = "success";
+                    window.location.href = "page/1?SuccessSubmitted=文章修改成功！";
                     //controller层定义访问success即可返回success.html，所以这里不需要使用路径“success.html”
                 } else {
                     console.log("操作失败或服务器返回无效数据");

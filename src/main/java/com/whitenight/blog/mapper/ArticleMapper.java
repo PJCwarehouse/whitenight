@@ -4,12 +4,13 @@ import com.whitenight.blog.entity.ArticleEntity;
 import com.whitenight.blog.entity.CommentsEntity;
 import org.apache.ibatis.annotations.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Mapper
 public interface ArticleMapper {
-    @Insert("insert into article(title,content)values(#{title},#{content})")
-    void saveInfo(@Param("title") String title, @Param("content") String content);
+    @Insert("insert into article(title,content,time,author)values(#{title},#{content},#{time},#{author})")
+    void saveInfo(@Param("title") String title, @Param("content") String content, @Param("time") Date time, @Param("author") String author);
 
     @Select("select * from article")
     List<ArticleEntity> selectAllArticles();
@@ -23,5 +24,7 @@ public interface ArticleMapper {
 
     @Update("UPDATE article SET title = #{title}, content = #{content} WHERE id = #{id}")
     void updateArticle(@Param("id") int id, @Param("title") String newTitle, @Param("content") String newContent);
-
+    // 文章发分页查询
+    @Select("SELECT * FROM article ORDER BY id DESC")
+    public List<ArticleEntity> selectArticleWithPage();
 }

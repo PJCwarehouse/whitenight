@@ -118,7 +118,7 @@
             url: "/deposit",
             data: {
                 title: $("#title").val(),
-                content:$("#my-editormd-html-code").val(),
+                content:$("#my-editormd-markdown-doc").val(),
 
             },
             contentType: "application/x-www-form-urlencoded; charset=utf-8",
@@ -126,7 +126,7 @@
             success: function (data) {
                 if (data.status === "success") {
                     // 操作成功，执行相应的操作
-                    window.location.href = "index?SuccessSubmitted=文章提交成功！";
+                    window.location.href = "page/1?SuccessSubmitted=文章提交成功！";
                     //controller层定义访问success即可返回success.html，所以这里不需要使用路径“success.html”
                 } else {
                     console.log("操作失败或服务器返回无效数据");

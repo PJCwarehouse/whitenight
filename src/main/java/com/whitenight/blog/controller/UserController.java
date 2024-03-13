@@ -39,12 +39,6 @@ public class UserController {
         return "success";
     }
 
-    @RequestMapping("/signup")
-    public String disp(){
-        System.out.println("跳转到注册页面");
-        return "signup";
-    }
-
     @RequestMapping("/home page")
     public String home(){
         System.out.println("跳转到主页");
@@ -60,11 +54,23 @@ public class UserController {
 
     @RequestMapping("/test")
     public String test(){
-//        System.out.println("测试");
         return "test";
     }
 
+    @RequestMapping("/NoPermissions")
+    public String NoPermissions(){
+        return "NoPermissions";
+    }
+
+
+    @RequestMapping("/signup")
+    public String disp(){
+        System.out.println("跳转到注册页面");
+        return "signup";
+    }
+
     //实现注册功能
+    //虽然都是signup，这里后端是通过post和get来分辨返回哪个函数
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public String signUp(String username, String password, Model model){
         if(StringUtils.isEmpty(username)){
@@ -90,15 +96,14 @@ public class UserController {
 
     //实现用户注销功能
     @RequestMapping(value = "deleteUser",method = RequestMethod.POST)
-    public ResponseEntity<String> deleteUser(@RequestParam int userId){
-        boolean isUserDeleted = userService.deleteUser(userId);
-        if(isUserDeleted) {
-            System.out.println("注销用户:(userid:" + userId + ")");
-            return ResponseEntity.ok("用户删除成功");
-        }else{
-            return ResponseEntity.notFound().build();
+    public String deleteUser(@RequestParam int userID){
+        boolean isUserDeleted = userService.deleteUser(userID);
+        if(isUserDeleted){
+            System.out.println("注销用户:(userid:" + userID + ")");
+        }else {
+            System.out.println("用户" + userID + "注销失败");
         }
-
+        return "success";
     }
 
 }
