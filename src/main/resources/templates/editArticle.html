@@ -73,8 +73,9 @@
 
     </style>
 </head>
+<div th:replace="comm/header :: header"></div>
 <body>
-
+<a id="return-home" href="/page/1">返回主页</a>
 <!--博客编辑区  -->
 <div class="blog-edit-container">
     <!-- 标题编辑区 -->
@@ -95,6 +96,11 @@
 <!--    editor.md 编辑器会自动将用户编辑的 Markdown 内容和其转化出的 HTML 内容写入两个不同的隐藏的 <textarea> 中。-->
 <!--    这样做的目的是为了方便在需要时获取这些内容并将其提交到服务器进行处理。-->
 </div>
+
+<footer class="myFooter">
+    <div class="footer-title">人生当苦无妨，良人当归即好。</div>
+    <div class="icp">© 2024 / 蜀ICP备2023028036号-1</div>
+</footer>
 <script type="text/javascript">
     <!--为了让editor.md编辑器完整的显示出来-->
     var editor;

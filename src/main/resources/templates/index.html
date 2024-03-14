@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<div th:replace="/comm/header :: header"></div>
+<div th:replace="comm/header :: header"></div>
 <body onload="fadeInAndOut()">
 <div id="SuccessSubmitted" th:if="${SuccessSubmitted}" th:text="${SuccessSubmitted}"></div>
 
@@ -32,7 +32,7 @@
             </div>
             <!-- 文章分页信息 -->
             <div class="am-pagination">
-                <div th:replace="/paging::pageNav(${articles},'上一页','下一页','page')" />
+                <div th:replace="paging::pageNav(${articles},'上一页','下一页','page')" />
             </div>
         </div>
 
@@ -84,52 +84,6 @@
 </div>
 
 <script>
-    // // 获取注销按钮和模态框元素
-    // const logoutButton = document.getElementById('logout-button');
-    // const logoutModal = document.getElementById('logoutModal');
-    // const confirmLogout = document.getElementById('confirmLogout');
-    // const cancelLogout = document.getElementById('cancelLogout');
-    // const logoutForm = document.getElementById('logout-form');
-    //
-    // // 点击注销按钮时，显示模态框
-    // logoutButton.addEventListener('click', () => {
-    //     logoutModal.style.display = 'block';
-    // });
-    //
-    // // 点击确认注销按钮
-    // confirmLogout.addEventListener('click', () => {
-    //     // 使用XMLHttpRequest对象发送请求到后端处理注销用户
-    //     const xhr = new XMLHttpRequest();
-    //     const url = `/deleteUser?userId=${document.querySelector('#logout-form').value}`;
-    //
-    //     xhr.open('POST', url, true);
-    //     xhr.onreadystatechange = function () {
-    //         if (xhr.readyState === 4) {
-    //             if (xhr.status === 200) {
-    //                 // 注销成功，可以执行重定向或其他操作
-    //                 window.location.href = '/login'; //
-    //             } else {
-    //                 // 注销失败，可以提示用户或进行其他处理
-    //                 console.log('注销用户失败');
-    //             }
-    //         }
-    //     };
-    //
-    //     xhr.send();
-    //     logoutModal.style.display = 'none'; // 关闭模态框
-    // });
-    //
-    // // 点击取消注销按钮或模态框外部，关闭模态框
-    // cancelLogout.addEventListener('click', () => {
-    //     logoutModal.style.display = 'none';
-    // });
-    //
-    // window.addEventListener('click', (event) => {
-    //     if (event.target === logoutModal) {
-    //         logoutModal.style.display = 'none';
-    //     }
-    // });
-
     function fadeInAndOut() {
         //SuccessSubmitted=文章提交成功！
         var SuccessSubmitted = document.getElementById('SuccessSubmitted');
