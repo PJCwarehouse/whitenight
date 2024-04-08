@@ -4,6 +4,7 @@ import com.whitenight.blog.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -27,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "../lib/css/bootstrap.min.css","../bootstrap.bundle.min.js","/signup","/loginError","/register","/signupError","signupError","/comm/header")
                 .permitAll() //error 放开权限 ，不然登陆失败跳转不过来
                 .antMatchers("/home page").hasAnyRole("visitor","admin")
-                .antMatchers("/management","/articles management").hasRole("admin");//数据库权限名加了ROLE前缀，这里用hasRole方便，不用hasAnyAuthority
+                .antMatchers("/articles management").hasRole("admin");//数据库权限名加了ROLE前缀，这里用hasRole方便，不用hasAnyAuthority
 //                .anyRequest().permitAll();//方便测试
 //                .anyRequest().authenticated();
         //authenticated()要求在执行该请求时， 必须已经登录了应用。
@@ -50,13 +52,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll() //这个permitAll的意思是 /login /loginIn 这两个接口不需要权限（不然未登录用户没法登录）
                 .and().csrf().disable();
         http.exceptionHandling()
-                .accessDeniedHandler((httpServletRequest, httpServletResponse, e) -> {
-                    httpServletResponse.sendRedirect("/NoPermissions");
-                });
+                .accessDeniedHandler(accessDeniedHandler());
 
         super.configure(http);
         http.headers().frameOptions().disable();
 
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new CustomAccessDeniedHandler();
     }
 
     @Override

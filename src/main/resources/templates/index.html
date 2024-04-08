@@ -5,13 +5,13 @@
 <body onload="fadeInAndOut()">
 <div id="SuccessSubmitted" th:if="${SuccessSubmitted}" th:text="${SuccessSubmitted}"></div>
 
+
 <div class="am-g am-g-fixed blog-fixed index-page">
         <div class="am-u-md-8 am-u-sm-12">
             <!-- 文章遍历并分页展示 -->
             <div th:each="article: ${articles.list}">
                 <article class="am-g blog-entry-article">
                     <div class="am-u-lg-6 am-u-md-12 am-u-sm-12 blog-entry-img">
-<!--                        <img width="100%" class="am-u-sm-12" th:src="@{${commons.show_thumb(article)}}"/>-->
                         <img width="100%" class="am-u-sm-12" th:src="@{/static/user/img/rand/__${article.id%24}__.png}"/>
                     </div>
                     <div class="am-u-lg-6 am-u-md-12 am-u-sm-12 blog-entry-text">
@@ -35,7 +35,6 @@
                 <div th:replace="paging::pageNav(${articles},'上一页','下一页','page')" />
             </div>
         </div>
-
 
         <!-- 博主信息描述 -->
             <div class="am-u-md-4 am-u-sm-12 blog-sidebar">
@@ -63,17 +62,6 @@
     <div class="icp">© 2024 / 蜀ICP备2023028036号-1</div>
 </footer>
 
-<!--        <form th:each="article : ${articles}" action="/toArticle" method="get">-->
-<!--            <div class="blog-post">-->
-<!--                <h3 th:text="${article.title}" class="blog-post-title"></h3>-->
-<!--                <div class="article-content" id="article-content-${article.id}">-->
-<!--                    <p th:text="${article.content}"></p>-->
-<!--                </div>-->
-<!--                <input name="articleId" th:value="${article.id}" type="hidden">-->
-<!--                <input type="submit" value="转到文章">-->
-<!--            </div>-->
-<!--        </form>-->
-
 <!-- 模态框 HTML 结构 -->
 <div id="logoutModal" class="modal">
     <div class="modal-content">
@@ -84,6 +72,31 @@
 </div>
 
 <script>
+    $(document).ready(function() {
+        // 检查是否存在 NoPermissions 参数
+        var NoPermission = getUrlParameter('NoPermission');
+        if (NoPermission !== undefined && NoPermission !== null) {
+            // 如果存在 NoPermissions 参数，显示提示框
+            NoPermissions();
+        }
+    });
+
+    function NoPermissions() {
+        $.confirm('抱歉，您的权限不足，若有需求请联系管理员','提示信息',{
+            confirmButtonText: '确定',
+            type: 'warning',
+        });
+    }
+
+    // 获取 URL 参数的函数
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? undefined : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    };
+
+
     function fadeInAndOut() {
         //SuccessSubmitted=文章提交成功！
         var SuccessSubmitted = document.getElementById('SuccessSubmitted');
@@ -100,6 +113,7 @@
             SuccessSubmitted.style.opacity = 0;
         }, 2000);
     }
+
 </script>
 </body>
 </html>

@@ -53,6 +53,7 @@ public class ArticleController {
 //    @RequestMapping(value = "/index", method = RequestMethod.GET)
     @GetMapping(value = "/page/{p}")
     public String index(@RequestParam(name = "SuccessSubmitted", required = false) String SuccessSubmitted,
+                        @RequestParam(name = "NoPermission", required = false) String NoPermission,
                         @PathVariable("p") int page, @RequestParam(value = "count", defaultValue = "5") int count, Model model) {
         PageInfo<ArticleEntity> articles = articleService.selectArticleWithPage(page, count);
         model.addAttribute("articles", articles);
@@ -66,6 +67,10 @@ public class ArticleController {
             System.out.println("成功提交文章");
         }
 
+        if (NoPermission != null) {
+            model.addAttribute("NoPermission", NoPermission);
+            System.out.println("用户：" + userid + "，权限不足，被拒绝访问管理界面" );
+        }
         System.out.println("分页获取文章信息: 页码 "+page+",条数 "+count);
         return "index";
     }

@@ -45,13 +45,6 @@ public class UserController {
         return "home page";
     }
 
-    @RequestMapping("/management")
-    public String man(){
-        System.out.println("跳转到管理界面");
-        return "management";
-    }
-
-
     @RequestMapping("/test")
     public String test(){
         return "test";
