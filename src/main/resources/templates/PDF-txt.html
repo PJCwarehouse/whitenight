@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF转TXT文件</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            border: 2px dashed #ddd;
+            padding: 50px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            position: absolute;
+            top: 30%;
+            transform: translateY(-30%);
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        p {
+            margin-bottom: 20px;
+            color: #555;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #28a745;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .button:hover {
+            background-color: #218838;
+        }
+        #fileInput {
+            display: none;
+        }
+        #fileName {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #333;
+        }
+        .page-input {
+            display: block;
+            margin: 10px 0;
+        }
+        .page-input input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>PDF转TXT文件</h1>
+    <p>通过将PDF转换为TXT来保存你的文档! 在你的PDF文档的基础上创建一个文本文件，对于存档、编辑以及更多来说是非常好的。</p>
+    <input type="file" id="fileInput" accept=".pdf">
+    <button class="button" onclick="document.getElementById('fileInput').click()">选择文件</button>
+    <span id="fileName">未选择文件</span>
+    <div class="page-input">
+        <label for="startPage">开始页：</label>
+        <input type="number" id="startPage" placeholder="如果不选择转换页数，默认转换所有页">
+    </div>
+    <div class="page-input">
+        <label for="endPage">结束页：</label>
+        <input type="number" id="endPage" placeholder="如果不选择转换页数，默认转换所有页">
+    </div>
+    <button class="button" onclick="uploadFile()">上传文件</button>
+    <button class="button" onclick="promptDownload()">下载转换后的文件</button>
+</div>
+
+<script>
+    let uploadedFileName = '';
+    var uploadStatus = "未选择"; // 初始状态为未选择
+
+    document.getElementById('fileInput').addEventListener('change', function() {
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+        if (file) {
+            uploadedFileName = file.name.replace('.pdf', '.txt'); // 记录文件名并将扩展名改为.txt
+            document.getElementById('fileName').textContent = file.name; // 显示文件名
+            uploadStatus = "已选择" // 选择新文件后，重置上传状态，避免选择了新文件，直接点击下载，会出现 内容是旧文件，但文件名是新文件 的bug
+        } else {
+            document.getElementById('fileName').textContent = '未选择文件';
+        }
+    });
+
+    function uploadFile() {
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+        var startPage = document.getElementById('startPage').value;
+        var endPage = document.getElementById('endPage').value;
+
+        if (!file) {
+            alert('请先选择一个文件');
+            return;
+        }
+
+        uploadStatus = "正在上传"; // 更新状态为正在上传
+
+        var formData = new FormData();
+        formData.append('file', file);
+        formData.append('startPage', startPage);
+        formData.append('endPage', endPage);
+
+        fetch('/upload', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('文件上传成功');
+                    alert('文件上传成功');
+                    uploadStatus = "上传成功"; // 文件上传成功后，更新状态为上传成功
+                } else {
+                    console.error('文件上传失败');
+                }
+            })
+            .catch(error => console.error('发生错误:', error));
+    }
+
+    function promptDownload() {
+        var fileInput = document.getElementById('fileInput');
+        if (!fileInput.files[0]) {
+            alert('请先选择一个文件');
+            return;
+        }
+        if (uploadStatus === "已选择") {
+            alert('请先上传文件');
+            return;
+        }
+        if (uploadStatus === "正在上传") {
+            alert('请等待文件上传');
+            return;
+        }
+
+        const downloadLink = document.createElement('a');
+        downloadLink.style.display = 'none';
+        downloadLink.id = 'downloadLink';
+        document.body.appendChild(downloadLink);
+
+        fetch('/download')
+            .then(response => {
+                if (response.ok) {
+                    return response.blob();
+                } else {
+                    console.error('下载文件失败');
+                }
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(new Blob([blob]));
+                const a = document.getElementById('downloadLink');
+                a.href = url;
+                a.download = uploadedFileName || 'converted.txt'; // 使用记录的文件名
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => console.error('发生错误:', error));
+    }
+</script>
+
+</body>
+</html>

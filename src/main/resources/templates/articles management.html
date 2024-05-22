@@ -45,6 +45,7 @@
         </form>
         <form action="/editArticle" method="get">
             <input name="articleId" th:value="${article.id}" hidden>
+            <input name="type" th:value="${0}" hidden>
             <input type="submit" value="编辑文章">
         </form>
 <!--        <form onsubmit="return confirmForm()">-->

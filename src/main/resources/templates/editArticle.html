@@ -75,7 +75,10 @@
 </head>
 <div th:replace="comm/header :: header"></div>
 <body>
-<a id="return-home" href="/articles management">返回管理界面</a>
+<!--<a id="return-home" href="/articles management">返回管理界面</a>-->
+<a id="return-home" th:if="${type == 0}" href="/articles management">返回管理界面</a>
+<a id="return-home" th:if="${type == 1}" href="/homepage">返回管理界面</a>
+
 <!--博客编辑区  -->
 <div class="blog-edit-container">
     <!-- 标题编辑区 -->
@@ -123,13 +126,23 @@
     });
     <!--然后用ajax将编辑器中的md格式的数据提交到后台，存储在数据库中，有的人可能存储的是html格式的，也行，这个看你自己的选择了，不过存储.md格式还是要好一点-->
     $("#submit_button").click(function () {
+        var title = $("#title").val().trim();
+        var content = $("#my-editormd-markdown-doc").val().trim();
+
+        // 检查标题是否为空
+        if (!title) {
+            // 标题为空，触发 noTitle 提示
+            noTitle();
+            return; // 停止执行后续操作
+        }
+
         $.ajax({
             type: "post",
             url: "/updateArticle",
             data: {
                 id:$("#articleID").val(),
-                title: $("#title").val(),
-                content:$("#my-editormd-markdown-doc").val(),
+                title: title,
+                content:content,
 
             },
             contentType: "application/x-www-form-urlencoded; charset=utf-8",
@@ -151,6 +164,12 @@
             }
         });
     });
+    function noTitle() {
+        $.confirm('抱歉，标题不能为空，请补充标题后重新提交','提示信息',{
+            confirmButtonText: '确定',
+            type: 'warning',
+        });
+    }
 </script>
 </body>
 </html>

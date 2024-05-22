@@ -188,7 +188,7 @@
 
     function deleteComment(commentID) {
         $.ajax({
-            type: "POST",
+            type: "GET",
             url: "/deleteComment",
             data: { commentId: commentID },
             success: function(response) {

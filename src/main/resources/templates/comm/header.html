@@ -68,11 +68,16 @@
         }
 
         #SuccessSubmitted {
-            color: red;
+            color: #c72c41; /* 使用柔和的深红色 */
+            font-family: "Arial", sans-serif; /* 使用通用的无衬线字体 */
             text-align: center;
-            font-size: 100px;
+            font-size: 3rem; /* 改为相对单位，使其更具适应性 */
+            padding: 20px; /* 添加内边距，使文字更加舒适 */
+            border-radius: 10px; /* 添加圆角，使样式更加柔和 */
+            background-color: rgba(255, 255, 255, 0.8); /* 使用半透明的白色背景 */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 添加轻微的阴影 */
             position: fixed;
-            top: 40px;
+            top: 60px;
             left: 50%;
             transform: translateX(-50%);
             opacity: 1; /* 初始时透明度为0 */
@@ -175,6 +180,8 @@
             <li><a href="/signup">注册</a></li>
             <li><a href="/articles publish">创建文章</a></li>
             <li><a href="/articles management">文章管理</a></li>
+            <li><a href="/homepage">个人主页</a></li>
+            <li><a href="/PDF-txt">pdf转txt</a></li>
         </ul>
     </nav>
 </header>

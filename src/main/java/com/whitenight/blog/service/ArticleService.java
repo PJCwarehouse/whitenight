@@ -18,8 +18,8 @@ public class ArticleService {
     @Resource
     CommentMapper commentMapper;
 
-    public void Insert(String title, String content, Date time,String author) {
-        articleMapper.saveInfo(title, content,time,author);
+    public void Insert(String title, String content, Date time,String author,int userId) {
+        articleMapper.saveInfo(title, content,time,author,userId);
     }
 
     //根据id升序返回文章列表
@@ -46,6 +46,9 @@ public class ArticleService {
         return articleMapper.selectArticlesById(id);
     }
 
+    public List<ArticleEntity> selectArticlesByUserId(int userId){
+        return articleMapper.selectArticlesByUserId(userId);
+    }
     public void deleteArticle(int articleID){
         commentMapper.deleteCommentsByArticle(articleID);
         articleMapper.deleteArticle(articleID);

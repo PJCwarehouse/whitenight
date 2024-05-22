@@ -9,6 +9,7 @@ public class ArticleEntity {
         private Date time;
         private String author;
         String thumbnail;
+        int userId;
         public ArticleEntity() {
         }
         public ArticleEntity(String title, String content) {
@@ -64,5 +65,12 @@ public class ArticleEntity {
             this.thumbnail = thumbnail;
         }
 
+        public int getUserId() {
+            return userId;
+        }
+
+        public void setUserId(int userId) {
+            this.userId = userId;
+        }
 }
 

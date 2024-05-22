@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.swing.text.html.parser.Entity;
 import java.util.List;
 
 @Service
@@ -19,21 +18,15 @@ public class UserService implements UserDetailsService {
     @Resource
     private UserMapper userMapper;
     @Resource
-    private ArticleMapper articleMapper;
-    @Resource
     private CommentMapper commentMapper;
     private int id;
     private String username;
+
     public String getUsername(){
         return username;
     }
     public int getId(){
         return id;
-    }
-
-    public UserEntity LoginIn(String username, String password) {
-        System.out.println("username,password");
-        return userMapper.getInfo(username, password);
     }
 
     public boolean deleteUser(int userId) {

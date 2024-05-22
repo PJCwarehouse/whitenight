@@ -2,10 +2,7 @@ package com.whitenight.blog.controller;
 
 import com.whitenight.blog.service.CommentsService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -20,17 +17,16 @@ public class CommentsController {
         System.out.println("用户id为" + userId + "的用户" + "在id为" + articleId + "文章中发布了评论，内容为:" + content);
         return "success";
     }
-    @PostMapping("/deleteComment")
+    @GetMapping("/deleteComment")
     public String deleteComment(@RequestParam int commentId) {
         boolean isDeleted = commentsService.deleteComment(commentId);
 
-        System.out.println("接收到评论" + commentId);
+        System.out.println("删除id为：" + commentId + " 的评论");
         if (isDeleted) {
             return "success"; //对于@DeleteMapping，通常不直接返回"success"或"error"这样的字符串
         } else {
             return "error"; //在RESTful架构中，DELETE请求应该返回适当的HTTP状态码，以指示操作的结果
         }
-
     }
 
     //删除评论

@@ -3,7 +3,6 @@ package com.whitenight.blog.controller;
 import com.github.pagehelper.PageInfo;
 import com.whitenight.blog.entity.ArticleEntity;
 import com.whitenight.blog.entity.CommentsEntity;
-import com.whitenight.blog.entity.UserEntity;
 import com.whitenight.blog.service.ArticleService;
 import com.whitenight.blog.service.CommentsService;
 import com.whitenight.blog.service.UserService;
@@ -19,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @Controller
 public class ArticleController {
     @Resource
@@ -27,6 +27,7 @@ public class ArticleController {
     CommentsService commentsService;
     @Resource
     UserService userService;
+
 //    UserEntity userEntity;
     //进入发布文章界面
     @RequestMapping("/articles publish")
@@ -41,7 +42,8 @@ public class ArticleController {
     public Map<String, String> deposit(String title, String content){
         Date time = new Date();
         String author = userService.getUsername();
-        articleService.Insert(title,content,time,author);
+        int userId = userService.getId();
+        articleService.Insert(title,content,time,author,userId);
         System.out.println("成功发布文章:" + title);
 
         Map<String, String> response = new HashMap<>();
@@ -50,7 +52,7 @@ public class ArticleController {
     }
 
     //发布文章后返回首页
-//    @RequestMapping(value = "/index", method = RequestMethod.GET)
+
     @GetMapping(value = "/page/{p}")
     public String index(@RequestParam(name = "SuccessSubmitted", required = false) String SuccessSubmitted,
                         @RequestParam(name = "NoPermission", required = false) String NoPermission,
@@ -76,15 +78,32 @@ public class ArticleController {
     }
 
 
-    //进入文章管理界面
+    //进入文章管理界面，这里在security里面设置了权限，非admin权限用户进入会被限制
     @RequestMapping("/articles management")
     public String management(Model model){
-        List<ArticleEntity> articles = articleService.selectAllArticles();
-        model.addAttribute("articles", articles);
+        int userId = userService.getId();
+        if(userId == 1){
+            List<ArticleEntity> articles = articleService.selectAllArticles();
+            model.addAttribute("articles", articles);
+        }else {
+            List<ArticleEntity> articles = articleService.selectArticlesByUserId(userId);
+            model.addAttribute("articles", articles);
+        }
 
         System.out.println("跳转到文章管理界面");
         return "articles management";
     }
+    //进入用户文章管理界面
+    @RequestMapping("/homepage")
+    public String homepage(Model model){
+        int userId = userService.getId();
+        List<ArticleEntity> articles = articleService.selectArticlesByUserId(userId);
+        model.addAttribute("articles", articles);
+
+        System.out.println("跳转到个人文章管理界面");
+        return "homepage";
+    }
+
 
     //查看文章
     @RequestMapping(value = "/toArticle",method = RequestMethod.GET)
@@ -130,9 +149,10 @@ public class ArticleController {
 
     //进入编辑文章页面
     @RequestMapping(value = "/editArticle")
-    public String editArticle(@RequestParam(name = "articleId") int articleID, Model model) {
+    public String editArticle(@RequestParam(name = "articleId") int articleID, @RequestParam(name = "type") int type, Model model) {
         ArticleEntity articleEntity = articleService.selectArticlesById(articleID);
         model.addAttribute("article", articleEntity);
+        model.addAttribute("type", type);
         return "editArticle";
     }
 
@@ -148,8 +168,6 @@ public class ArticleController {
         response.put("status", "success");
         return response;
     }
-
-
 
 
 }

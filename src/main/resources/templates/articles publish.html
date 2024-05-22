@@ -118,15 +118,27 @@
             saveHTMLToTextarea : true
         });
     });
+
     <!--然后用ajax将编辑器中的md格式的数据提交到后台，存储在数据库中，有的人可能存储的是html格式的，也行，这个看你自己的选择了，不过存储.md格式还是要好一点-->
     $("#submit_button").click(function () {
+        // 获取标题和内容
+        var title = $("#title").val().trim();
+        var content = $("#my-editormd-markdown-doc").val().trim();
+
+        // 检查标题是否为空
+        if (!title) {
+            // 标题为空，触发 noTitle 提示
+            noTitle();
+            return; // 停止执行后续操作
+        }
+
+        // 标题不为空，执行发布文章的 AJAX 请求
         $.ajax({
             type: "post",
             url: "/deposit",
             data: {
-                title: $("#title").val(),
-                content:$("#my-editormd-markdown-doc").val(),
-
+                title: title,
+                content: content,
             },
             contentType: "application/x-www-form-urlencoded; charset=utf-8",
             dataType: "json",
@@ -147,6 +159,14 @@
             }
         });
     });
+
+    function noTitle() {
+        $.confirm('抱歉，标题不能为空，请补充标题后重新提交','提示信息',{
+            confirmButtonText: '确定',
+            type: 'warning',
+        });
+    }
+
 </script>
 </body>
 </html>
