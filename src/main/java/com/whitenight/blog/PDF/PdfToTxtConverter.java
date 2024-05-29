@@ -15,7 +15,7 @@ public class PdfToTxtConverter {
             String pythonScriptPath = new File(projectRoot, "pdf-txt/python/demo_gui/main.py").getCanonicalPath();
 
             String pythonCommand = getPythonCommand();
-            System.out.println("Using Python command: " + pythonCommand);
+            System.out.println("使用python版本为: " + pythonCommand);
 
             System.out.println("Python Script Path: " + pythonScriptPath);
             // 使用 ProcessBuilder 执行 Python 脚本

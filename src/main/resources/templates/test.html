@@ -1,44 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>jQuery提示信息和删除提示弹窗</title>
-  <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/message.css"/>
-  <script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
-  <script src="../static/bootstrap/js/message.js" type="text/javascript" charset="utf-8"></script>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title></title>
 </head>
-<body>
-<button onclick="defaults()">默认</button>
-<button onclick="success()">成功</button>
-<button onclick="fail()">失败</button>
-<button onclick="warnings()">警告</button>
-<button onclick="confirm()">提示弹窗</button>
 
+<body>
+<div id="output"></div>
+<input type="text" id="messageInput" placeholder="输入消息">
+<button onclick="sendMessage()">发送消息</button>
 <script>
-  function defaults(){
-    $.message({type:'default',content:"我是默认提示"});
+  var websocket = null;
+  if ('WebSocket' in window) {
+    websocket = new WebSocket('wss://localhost:8443/webSocket');
+  } else {
+    alert('该浏览器不支持 WebSocket!');
   }
-  function success(){
-    $.message({type:'success',content:"我是成功提示"});
-  }
-  function fail(){
-    $.message({type:'error',content:"我是失败"});
-  }
-  function warnings(){
-    $.message({type:'warning',content:"警告提示"});
-  }
-  function confirm(){
-    $.confirm('确定删除该文件么?','提示信息',{
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-      define:function(){
-        $.message({content:'确定删除',time:2000})
-      },cancel:function(){
-        $.message({content:'取消删除',time:2000})
-      }
-    })
+
+  websocket.onopen = function(event) {
+    console.log('建立连接');
+    document.getElementById('output').innerText = '建立连接';
+  };
+
+  websocket.onclose = function(event) {
+    console.log('连接关闭');
+    document.getElementById('output').innerText = '连接关闭';
+  };
+
+  websocket.onmessage = function(event) {
+    console.log('收到消息:' + event.data);
+    document.getElementById('output').innerText = '收到消息: ' + event.data;
+  };
+
+  websocket.onerror = function() {
+    alert('WebSocket 通信错误');
+    document.getElementById('output').innerText = 'WebSocket 通信错误';
+  };
+
+  window.onbeforeunload = function() {
+    websocket.close();
+  };
+
+  function sendMessage() {
+    var message = document.getElementById('messageInput').value;
+    websocket.send(message);
   }
 </script>
 </body>
+
 </html>
