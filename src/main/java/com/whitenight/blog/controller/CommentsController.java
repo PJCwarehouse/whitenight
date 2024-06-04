@@ -17,6 +17,8 @@ public class CommentsController {
         System.out.println("用户id为" + userId + "的用户" + "在id为" + articleId + "文章中发布了评论，内容为:" + content);
         return "success";
     }
+
+    //删除评论
     @GetMapping("/deleteComment")
     public String deleteComment(@RequestParam int commentId) {
         boolean isDeleted = commentsService.deleteComment(commentId);
@@ -28,20 +30,5 @@ public class CommentsController {
             return "error"; //在RESTful架构中，DELETE请求应该返回适当的HTTP状态码，以指示操作的结果
         }
     }
-
-    //删除评论
-//    @DeleteMapping("/deleteComment")
-//    public ResponseEntity<String> deleteComment(@RequestParam int commentId) {
-//        boolean isCommentDeleted = commentsService.deleteComment(commentId);
-//
-//        if (isCommentDeleted) {
-//            // 如果评论删除成功，返回HTTP状态码200和一个成功消息
-//            return ResponseEntity.ok("评论删除成功");
-//        } else {
-//            // 如果删除失败，返回HTTP状态码404（或其他适当的错误状态码）和一个错误消息
-//            return ResponseEntity.notFound().build();
-//        }
-//
-//    }
 
 }

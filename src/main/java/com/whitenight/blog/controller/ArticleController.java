@@ -61,8 +61,9 @@ public class ArticleController {
         model.addAttribute("articles", articles);
 
         int userid = userService.getId();
+        String username = userService.getUsername();
         model.addAttribute("userid", userid);
-
+        model.addAttribute("username", username);
         // 使用 paramName，这里可以根据参数进行逻辑处理
         if (SuccessSubmitted != null) {
             model.addAttribute("SuccessSubmitted", SuccessSubmitted);
@@ -110,7 +111,7 @@ public class ArticleController {
     //只需要从服务器获取数据而不做任何修改时，使用 GET 是合适的。例如，获取文章列表、用户信息等。GET 请求通常被缓存，这有助于提高性能。
     public String toArticle(@RequestParam(name = "articleId") int articleId, Model model){
         //使用 @RequestParam 注解来获取名为 articleID 的参数值，并通过这个值从数据库中获取相应的文章实体。
-        ArticleEntity articleEntity = articleService.selectArticlesById(articleId);
+        ArticleEntity articleEntity = articleService.selectArticlesByArticleId(articleId);
         model.addAttribute("article", articleEntity);
 
         // 使用 CommonMark 进行 Markdown to HTML 的转换
@@ -150,7 +151,7 @@ public class ArticleController {
     //进入编辑文章页面
     @RequestMapping(value = "/editArticle")
     public String editArticle(@RequestParam(name = "articleId") int articleID, @RequestParam(name = "type") int type, Model model) {
-        ArticleEntity articleEntity = articleService.selectArticlesById(articleID);
+        ArticleEntity articleEntity = articleService.selectArticlesByArticleId(articleID);
         model.addAttribute("article", articleEntity);
         model.addAttribute("type", type);
         return "editArticle";

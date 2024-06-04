@@ -30,32 +30,6 @@ public class UserController {
         return "login";
     }
 
-    @RequestMapping("/loginError")
-    public String loginError(){
-        return "loginError";
-    }
-    @RequestMapping("/success")
-    public String success(){
-        return "success";
-    }
-
-    @RequestMapping("/home page")
-    public String home(){
-        System.out.println("跳转到主页");
-        return "home page";
-    }
-
-    @RequestMapping("/test")
-    public String test(){
-        return "test";
-    }
-
-    @RequestMapping("/NoPermissions")
-    public String NoPermissions(){
-        return "NoPermissions";
-    }
-
-
     @RequestMapping("/signup")
     public String disp(){
         System.out.println("跳转到注册页面");
@@ -97,6 +71,13 @@ public class UserController {
             System.out.println("用户" + userID + "注销失败");
         }
         return "success";
+    }
+
+    //实现用户登出功能
+    @RequestMapping(value = "logout",method = RequestMethod.POST)
+    public String logout(){
+        userService.logout();
+        return "login";
     }
 
 }

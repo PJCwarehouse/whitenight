@@ -16,7 +16,7 @@ public interface ArticleMapper {
     List<ArticleEntity> selectAllArticles();
 
     @Select("select * from article where id = #{id}")
-    ArticleEntity selectArticlesById(@Param("id") int id);
+    ArticleEntity selectArticlesByArticleId(@Param("id") int id);
 
     /**
      * 用户文章管理
@@ -33,7 +33,8 @@ public interface ArticleMapper {
 
     @Update("UPDATE article SET title = #{title}, content = #{content} WHERE id = #{id}")
     void updateArticle(@Param("id") int id, @Param("title") String newTitle, @Param("content") String newContent);
+
     // 文章发分页查询
     @Select("SELECT * FROM article ORDER BY id DESC")
-    public List<ArticleEntity> selectArticleWithPage();
+    List<ArticleEntity> selectArticleWithPage();
 }

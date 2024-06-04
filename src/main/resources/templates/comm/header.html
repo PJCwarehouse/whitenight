@@ -85,18 +85,6 @@
         }
 
 
-        /*#NoPermissions {*/
-        /*    color: red;*/
-        /*    text-align: center;*/
-        /*    font-size: 100px;*/
-        /*    position: fixed;*/
-        /*    top: 40px;*/
-        /*    left: 50%;*/
-        /*    transform: translateX(-50%);*/
-        /*    opacity: 1; !* 初始时透明度为0 *!*/
-        /*    transition: opacity 0s; !* 添加透明度渐变的过渡效果，时长为1秒 *!*/
-        /*}*/
-
         .two-lines {
             overflow: hidden;
             white-space: nowrap;
@@ -104,7 +92,7 @@
         }
 
 
-        button {
+        .button {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -113,21 +101,46 @@
             border-radius: 6px;
             border: none;
 
-            background: #6E6D70;
+            background: #63d23e;
             box-shadow: 0px 0.5px 1px rgba(0, 0, 0, 0.1), inset 0px 0.5px 0.5px rgba(255, 255, 255, 0.5), 0px 0px 0px 0.5px rgba(0, 0, 0, 0.12);
             color: #DFDEDF;
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
+            text-decoration: none; /* 添加此行，去除链接默认下划线 */
         }
 
-        button:focus {
-            box-shadow: inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2), 0px 0.5px 1px rgba(0, 0, 0, 0.1), 0px 0px 0px 3.5px rgba(58, 108, 217, 0.5);
-            outline: 0;
+        .button:focus, .button:hover {
+            background-color: rgba(66, 176, 127, 0.99);
+            outline: 0; /* 去除点击效果时的默认外边框 */
         }
-        button:hover {
-            background-color: rgba(163, 63, 173, 0.99);
+
+        /* 调整按钮容器样式 */
+        .blog-entry-button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 80px;
+            padding-bottom: 20px;
         }
+
+        /* 左侧删除按钮样式 */
+        #leftButtonContainer button {
+            background-color: gray; /* 设置左侧按钮背景色为灰色 */
+            color: white; /* 设置左侧按钮文字颜色为白色 */
+        }
+
+        /* 右侧编辑按钮样式 */
+        #rightButtonContainer button {
+            background-color: #5ccb1e; /* 设置右侧按钮背景色为蓝色 */
+            color: white; /* 设置右侧按钮文字颜色为白色 */
+        }
+
+        /* 右侧按钮容器靠右对齐 */
+        #rightButtonContainer {
+            margin-left: auto;
+        }
+
 
 
         .myFooter {
@@ -169,56 +182,22 @@
 <body>
 <header>
     <div>
-        <button onclick="confirmDeleteUser(this)" th:attr="data-userid=${userid}">注销用户</button>
+        <a href="/articles publish" class="button">创建文章</a>
     </div>
 
     <h1 class = "blog-name">WhiteNight的个人博客小站</h1>
 
     <nav>
         <ul>
-            <li><a href="/login">登录</a></li>
-            <li><a href="/signup">注册</a></li>
-            <li><a href="/articles publish">创建文章</a></li>
             <li><a href="/articles management">文章管理</a></li>
-            <li><a href="/homepage">个人主页</a></li>
             <li><a href="/PDF-txt">pdf转txt</a></li>
+            <li><a href="/personalHome" th:text="'你好!' + ${username}"></a></li>
+
         </ul>
     </nav>
 </header>
 <script>
-    function confirmDeleteUser(button) {
-        var userid = $(button).data("userid"); // 注意这里使用了小写的"data-userid"
-        $.confirm('确定注销用户么?','提示信息',{
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning',
-            define: function() {
-                $.message({content:'成功注销',time:2000})
-                deleteUser(userid); // 传递 articleId 给 deleteArticle
-            },
-            cancel: function() {
-                $.message({content:'取消注销',time:2000})
-            }
-        })
-    }
 
-    function deleteUser(userid) {
-        $.ajax({
-            type: "POST",
-            url: "/deleteUser",
-            data: { userID: userid },
-            success: function(response) {
-                console.log(response);
-                $.message({content:'成功注销',time:2000})
-                setTimeout(function () {
-                    window.location.href = "https://localhost:8443/login";
-                }, 1000);
-            },
-            error: function(error) {
-                console.error(error);
-            }
-        });
-    }
 </script>
 </body>
 </html>

@@ -22,11 +22,12 @@ public class UserService implements UserDetailsService {
     private int id;
     private String username;
 
-    public String getUsername(){
-        return username;
-    }
     public int getId(){
         return id;
+    }
+
+    public String getUsername(){
+        return username;
     }
 
     public boolean deleteUser(int userId) {
@@ -43,8 +44,16 @@ public class UserService implements UserDetailsService {
         UserEntity entity = new UserEntity();
         entity.setUsername(username);
         entity.setPassword(password);
+        //先把数据加入到用户表里面
         userMapper.saveInfo(entity);
+        //然后将用户表对应的id和权限存入权限表里面
         userMapper.saveInfoAuthority(entity.getId(),2);
+    }
+
+    public void logout(){
+        this.id = 0;
+        this.username = null;
+        System.out.println("用户已登出");
     }
 
     @Override
@@ -53,13 +62,12 @@ public class UserService implements UserDetailsService {
         // 注意，UserDetails是Spring Security提供的接口，您需要根据User实体类创建一个UserDetails对象并返回
         // 如果找不到用户，则可以抛出UsernameNotFoundException异常
         // 如果找到两个相同的用户名，也会报错
-        System.out.println("username:" + username);
         UserEntity entity = userMapper.getInfoByUserName(username);
         this.username = username;//通过登录信息获取username和id
         this.id = entity.getId();
         System.out.println("当前登录用户名:" + entity.getUsername());
         List<String> authorties = userMapper.getAuthoritiesByUserId(entity.getId());
-        System.out.println("authorties=" + authorties.toString());
+        System.out.println("当前用户权限为:" + authorties.toString());
         entity.setUserAuthorities(authorties);
         return entity;
     }

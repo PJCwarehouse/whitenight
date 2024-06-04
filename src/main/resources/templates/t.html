@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>悬停菜单示例</title>
+    <style>
+        .author-info {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 40px; /* 调整这个值以适应你的布局 */
+            left: 0;
+            background-color: white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dropdown-menu ul li {
+            padding: 8px 16px;
+        }
+
+        .dropdown-menu ul li a {
+            text-decoration: none;
+            color: black;
+            display: block;
+        }
+
+        .dropdown-menu ul li a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .author-info:hover .dropdown-menu {
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+<div class="author-info">
+    <div class="author-info__name" style="font-size: 32px;">你好, 用户名</div>
+    <div class="dropdown-menu">
+        <ul>
+            <li><a href="/logout">注销</a></li>
+            <li><a href="/signout">登出</a></li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

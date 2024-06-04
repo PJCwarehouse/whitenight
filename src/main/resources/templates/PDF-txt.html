@@ -251,8 +251,8 @@
     // webSocket部分---------------------------------------------------------------------
     var websocket = null;
     if ('WebSocket' in window) {
-        websocket = new WebSocket('wss://www.masteryy.top:8443/webSocket');
-        // websocket = new WebSocket('wss://localhost:8443/webSocket');
+        // websocket = new WebSocket('wss://www.masteryy.top:8443/webSocket');
+        websocket = new WebSocket('wss://localhost:8443/webSocket');
     } else {
         alert('该浏览器不支持 WebSocket!');
     }

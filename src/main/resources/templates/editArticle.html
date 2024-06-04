@@ -77,8 +77,8 @@
 <body>
 <!--<a id="return-home" href="/articles management">返回管理界面</a>-->
 <a id="return-home" th:if="${type == 0}" href="/articles management">返回管理界面</a>
-<a id="return-home" th:if="${type == 1}" href="/homepage">返回管理界面</a>
-
+<a id="return-home" th:if="${type == 1}" href="/page/1">返回主页</a>
+<a id="return-home" th:if="${type == 2}" href="/personalHome">返回个人主页</a>
 <!--博客编辑区  -->
 <div class="blog-edit-container">
     <!-- 标题编辑区 -->

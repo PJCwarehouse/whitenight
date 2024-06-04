@@ -146,7 +146,12 @@
         var uesrID = $(button).data("user-id");
         var username = $(button).data("username");
         var articleID = $(button).data("article-id");
+        if($("#comment-content").val() === ""){
+            alert("抱歉，评论不能为空，请重试");
+            return;
+        }
         var content = $("#comment-content").val(); // 获取评论内容
+
         $.ajax({
             type: "POST",
             url: "/comment",

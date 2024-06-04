@@ -38,12 +38,12 @@ public class ArticleService {
 //            article.setHits(statistic.getHits());
 //            article.setCommentsNum(statistic.getCommentsNum());
 //        }
-        PageInfo<ArticleEntity> pageInfo=new PageInfo<>(articleList);
+        PageInfo<ArticleEntity> pageInfo = new PageInfo<>(articleList);
         return pageInfo;
     }
 
-    public ArticleEntity selectArticlesById(int id) {
-        return articleMapper.selectArticlesById(id);
+    public ArticleEntity selectArticlesByArticleId(int id) {
+        return articleMapper.selectArticlesByArticleId(id);
     }
 
     public List<ArticleEntity> selectArticlesByUserId(int userId){
