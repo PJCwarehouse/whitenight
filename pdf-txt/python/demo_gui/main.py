@@ -47,7 +47,7 @@ def main():
 
     # Open a text file to write the output
     output_file = os.path.join(current_dir, os.pardir, os.pardir, 'txt', pdf_file_name.replace(".pdf", ".txt"))
-    with open(output_file, "w") as f:
+    with open(output_file, "a") as f:
         for img_idx, img in enumerate(images):
             page_num = start_page + img_idx
             print("Processing page %s ..." % page_num)

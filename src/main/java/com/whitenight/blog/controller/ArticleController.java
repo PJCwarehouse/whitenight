@@ -37,21 +37,21 @@ public class ArticleController {
     }
 
     //发布文章
-    @RequestMapping(value = "/deposit",method = RequestMethod.POST)
+    @RequestMapping("/deposit")
     @ResponseBody // 添加这个注解以将返回值作为响应的主体
     public Map<String, String> deposit(String title, String content){
         Date time = new Date();
         String author = userService.getUsername();
         int userId = userService.getId();
         articleService.Insert(title,content,time,author,userId);
-        System.out.println("成功发布文章:" + title);
+        System.out.println("成功发布文章，文章名:" + title);
 
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
         return response;
     }
 
-    //发布文章后返回首页
+    //返回首页
 
     @GetMapping(value = "/page/{p}")
     public String index(@RequestParam(name = "SuccessSubmitted", required = false) String SuccessSubmitted,
@@ -65,6 +65,7 @@ public class ArticleController {
         model.addAttribute("userid", userid);
         model.addAttribute("username", username);
         // 使用 paramName，这里可以根据参数进行逻辑处理
+        //发布文章后返回首页
         if (SuccessSubmitted != null) {
             model.addAttribute("SuccessSubmitted", SuccessSubmitted);
             System.out.println("成功提交文章");
@@ -94,17 +95,6 @@ public class ArticleController {
         System.out.println("跳转到文章管理界面");
         return "articles management";
     }
-    //进入用户文章管理界面
-    @RequestMapping("/homepage")
-    public String homepage(Model model){
-        int userId = userService.getId();
-        List<ArticleEntity> articles = articleService.selectArticlesByUserId(userId);
-        model.addAttribute("articles", articles);
-
-        System.out.println("跳转到个人文章管理界面");
-        return "homepage";
-    }
-
 
     //查看文章
     @RequestMapping(value = "/toArticle",method = RequestMethod.GET)
@@ -135,8 +125,6 @@ public class ArticleController {
         model.addAttribute("userid",userid);
         model.addAttribute("username",username);
 
-
-
         return "article";
     }
 
@@ -147,7 +135,6 @@ public class ArticleController {
         return "success";
     }
 
-
     //进入编辑文章页面
     @RequestMapping(value = "/editArticle")
     public String editArticle(@RequestParam(name = "articleId") int articleID, @RequestParam(name = "type") int type, Model model) {
@@ -156,8 +143,6 @@ public class ArticleController {
         model.addAttribute("type", type);
         return "editArticle";
     }
-
-
 
     //更新文章
     @RequestMapping(value = "/updateArticle")

@@ -1,8 +1,10 @@
 package com.whitenight.blog.service;
 
+import com.whitenight.blog.entity.DirectoryEntity;
 import com.whitenight.blog.entity.UserEntity;
 import com.whitenight.blog.mapper.ArticleMapper;
 import com.whitenight.blog.mapper.CommentMapper;
+import com.whitenight.blog.mapper.DirectoryMapper;
 import com.whitenight.blog.mapper.UserMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,6 +21,9 @@ public class UserService implements UserDetailsService {
     private UserMapper userMapper;
     @Resource
     private CommentMapper commentMapper;
+    @Resource
+    DirectoryService directoryService;
+
     private int id;
     private String username;
 
@@ -48,6 +53,8 @@ public class UserService implements UserDetailsService {
         userMapper.saveInfo(entity);
         //然后将用户表对应的id和权限存入权限表里面
         userMapper.saveInfoAuthority(entity.getId(),2);
+        //在注册用户的时候就创建对应的个人目录
+        directoryService.createDirectory(entity.getId(), 0, username);
     }
 
     public void logout(){
@@ -56,6 +63,9 @@ public class UserService implements UserDetailsService {
         System.out.println("用户已登出");
     }
 
+    public UserEntity selectUserNameById(int id){
+        return userMapper.selectUserNameById(id);
+    }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 在此处根据用户名从数据库中获取用户信息并返回UserDetails对象

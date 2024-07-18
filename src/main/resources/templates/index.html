@@ -143,16 +143,18 @@
     });
     //访问管理界面权限不够时显示
     $(document).ready(function() {
-        // 检查是否存在 NoPermissions 参数
+        // 检查是否存在 NoPermission 参数
         var NoPermission = getUrlParameter('NoPermission');
         if (NoPermission !== undefined && NoPermission !== null) {
             // 如果存在 NoPermissions 参数，显示提示框
             NoPermissions();
+            // 移除 URL 中的 NoPermission 参数
+            history.replaceState(null, '', removeURLParameter(window.location.href, 'NoPermission'));
         }
     });
 
     function NoPermissions() {
-        $.confirm('抱歉，您的权限不足，若有需求请联系管理员','提示信息',{
+        $.confirm('抱歉，您的权限不足，若有需求请联系管理员', '提示信息', {
             confirmButtonText: '确定',
             type: 'warning',
         });
@@ -160,11 +162,55 @@
 
     // 获取 URL 参数的函数
     function getUrlParameter(name) {
-        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-        var results = regex.exec(location.search);
-        return results === null ? undefined : decodeURIComponent(results[1].replace(/\+/g, ' '));
-    };
+        // 将方括号字符转义，以防止特殊字符干扰正则表达式
+        name = name.replace(/[\[\]]/g, '\\$&');
+
+        // 创建一个正则表达式，匹配 URL 中的参数
+        //[?&] 匹配参数的开始（? 或 &），name 是参数名，(=([^&#]*)|&|#|$) 用于匹配参数值（如果存在）
+        //url模版:page/1?NoPermission=权限不足！
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+
+        // 执行正则表达式，匹配 URL 并返回结果
+        var results = regex.exec(window.location.href);
+
+        // 如果没有找到匹配的参数，返回 null
+        if (!results) return null;
+
+        // 如果找到了参数但没有值，返回空字符串
+        if (!results[2]) return '';
+
+        // 解码参数值，并替换掉加号（+）为空格，返回结果
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+
+    function removeURLParameter(url, parameter) {
+        // 将 URL 按照 '?' 分割成两部分：基础部分和参数部分
+        var urlparts = url.split('?');
+
+        // 如果 URL 包含参数部分
+        if (urlparts.length >= 2) {
+            // 编码参数名并加上等号
+            var prefix = encodeURIComponent(parameter) + '=';
+
+            // 将参数部分按 '&' 或 ';' 分割成多个参数
+            var pars = urlparts[1].split(/[&;]/g);
+
+            // 遍历参数数组，移除指定参数
+            for (var i = pars.length; i-- > 0;) {
+                if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+                    pars.splice(i, 1);
+                }
+            }
+
+            // 重新组合 URL，将基础部分与处理后的参数部分合并
+            url = urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : '');
+            return url;
+        } else {
+            // 如果 URL 不包含参数部分，直接返回原 URL
+            return url;
+        }
+    }
 
 
     function fadeInAndOut() {

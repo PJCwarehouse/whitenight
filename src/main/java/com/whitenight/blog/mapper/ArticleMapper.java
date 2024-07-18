@@ -31,6 +31,7 @@ public interface ArticleMapper {
     @Delete("delete from article where id = #{id}")
     void deleteArticle(@Param("id") int articleID);
 
+    //更新文章内容
     @Update("UPDATE article SET title = #{title}, content = #{content} WHERE id = #{id}")
     void updateArticle(@Param("id") int id, @Param("title") String newTitle, @Param("content") String newContent);
 

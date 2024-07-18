@@ -36,7 +36,7 @@ public class HtmlController {
 
     @RequestMapping("/test")
     public String test(){
-        return "test";
+        return "个人主页测试版";
     }
 
     @RequestMapping("/NoPermissions")

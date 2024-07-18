@@ -27,7 +27,32 @@ import java.util.zip.ZipOutputStream;
 
 @Controller
 public class PdfController {
-    private List<String> uploadedFileNames  = new ArrayList<>();; // 记录上传的文件列表
+
+    static {
+        try {
+            setPath();  // 在静态代码块中调用希望最先执行的方法
+        } catch (IOException e) {
+            System.err.println("静态方法执行出错: " + e.getMessage());
+            e.printStackTrace();
+            // 可以根据实际情况处理异常
+        }
+    }
+    private List<String> uploadedFileNames  = new ArrayList<>();; // 记录上传的文件列表,非final类型
+    private static String projectRoot;
+    private static String pdfDirPath;
+    private static File pdfDir;
+    private static String txtDirPath;
+    private static File txtDir;
+    private static void setPath() throws IOException {
+//        projectRoot:当前文件的绝对路径，如果在windows系统中，那就是根目录下面
+//        如果是linux系统中，那就是当前jar包的同级目录下面
+        projectRoot = new File("").getAbsolutePath();
+        pdfDirPath = new File(projectRoot, "pdf-txt" + File.separator + "pdf").getCanonicalPath();
+        txtDirPath = new File(projectRoot, "pdf-txt" + File.separator + "txt").getCanonicalPath();
+//        File 对象只是一个路径表示，创建 File 对象并不会在文件系统中实际创建文件或目录
+        pdfDir = new File(pdfDirPath);
+        txtDir = new File(txtDirPath);
+    }
 
     //跳转PDF界面
     @RequestMapping(value = "/PDF-txt")
@@ -40,7 +65,7 @@ public class PdfController {
     @PostMapping("/upload")
     public ResponseEntity<String> upload(@RequestParam("files") List<MultipartFile> files,
                                          @RequestParam(value = "startPage", required = false) Integer startPage,
-                                         @RequestParam(value = "endPage", required = false) Integer endPage) throws IOException {
+                                         @RequestParam(value = "endPage", required = false) Integer endPage){
 
         //输入为空，走默认的 startPage<0,endPage>totalPage 的选择，直接转换所有页
         if(startPage == null){
@@ -58,27 +83,29 @@ public class PdfController {
             endPage = temp;
         }
 
-        int FirstPage = startPage;
-        int LastPage = endPage;
-        String projectRoot = new File("").getAbsolutePath();
-        String pdfDirPath = new File(projectRoot, "pdf-txt" + File.separator + "pdf").getCanonicalPath();
-        File pdfDir = new File(pdfDirPath);
-
-        // 确保目录存在
+//         确保目录存在
         if (!pdfDir.exists()) {
             pdfDir.mkdirs();
         }
 
         uploadedFileNames.clear(); // 清空之前的记录
+        clearDirectory(pdfDir);// 清空pdf文件夹
+        clearDirectory(txtDir);// 清空txt文件夹
 
         for (MultipartFile file : files) {
-            if (file == null || file.isEmpty()) {
-                System.out.println("文件为空或未上传");
-                continue;
+            String pdfFileName = file.getOriginalFilename();
+            File uploadFile = new File(pdfDir, pdfFileName);
+
+            // 检查同名文件并重命名
+            int counter = 1;
+            while (uploadFile.exists()) {
+                String newFileName = pdfFileName.substring(0, pdfFileName.lastIndexOf('.')) + "(" + counter + ")" + pdfFileName.substring(pdfFileName.lastIndexOf('.'));
+                uploadFile = new File(pdfDir, newFileName);
+                counter++;
             }
 
-            String pdfFileName = file.getOriginalFilename();
-            uploadedFileNames.add(pdfFileName); // 记录文件名
+            pdfFileName = uploadFile.getName();
+            uploadedFileNames.add(uploadFile.getName()); // 记录文件名
 
             //              通过webSocket发送信息给客户端
             WebSocket.broadcast("正在转换文件" + pdfFileName);
@@ -86,7 +113,6 @@ public class PdfController {
             System.out.println("上传pdf文件名为:" + pdfFileName);
             System.out.println("PDF文件存放路径为:" + pdfDirPath);
 
-            File uploadFile = new File(pdfDir, pdfFileName);
 
             try {
                 // 将上传的文件内容写入到本地文件中
@@ -96,6 +122,9 @@ public class PdfController {
                 int totalPages = getPdfPageCount(uploadFile);
                 System.out.println("PDF总页数: " + totalPages);
                 // 设置默认的开始页和结束页
+
+                int FirstPage = startPage;
+                int LastPage = endPage;
 
                 if (startPage < 0 || startPage > totalPages) {
                     FirstPage = 0;
@@ -108,8 +137,14 @@ public class PdfController {
                 System.out.println("开始页数为: " + FirstPage);
                 System.out.println("结束页数为: " + LastPage);
 
-//              调用 PdfToTxtConverter 进行处理
-                PdfToTxtConverter.convertPdfToTxt(pdfFileName, FirstPage, LastPage);
+                int pageLength = LastPage - FirstPage;
+                while(pageLength > 40){
+                    PdfToTxtConverter.convertPdfToTxt(pdfFileName, FirstPage, FirstPage + 40);
+                    FirstPage += 40;
+                    pageLength -= 40;
+                    System.out.println("执行起始页数：" + FirstPage);
+                }
+                PdfToTxtConverter.convertPdfToTxt(pdfFileName, FirstPage, LastPage);//调用 PdfToTxtConverter 进行处理
                 System.out.println("文件 " + pdfFileName + " 成功上传并转换\n");
 
             } catch (IOException e) {
@@ -119,14 +154,12 @@ public class PdfController {
             }
         }
         WebSocket.broadcast("所有文件已成功上传并转换！");
-        return ResponseEntity.ok("所有文件上传成功并转换");
+        return ResponseEntity.ok("所有文件上传成功并转换\n");
     }
 
 //    下载文件
     @GetMapping("/download")
     public ResponseEntity<Resource> download() throws IOException {
-        String projectRoot = new File("").getAbsolutePath();
-        String txtDirPath = new File(projectRoot, "pdf-txt" + File.separator + "txt").getCanonicalPath();
         String zipDirPath = new File(projectRoot, "pdf-txt" + File.separator + "zip").getCanonicalPath();
 
         // 创建 zip 文件
@@ -168,6 +201,22 @@ public class PdfController {
                             zos.write(buffer, 0, length);
                         }
                         zos.closeEntry();
+                    }
+                }
+            }
+        }
+    }
+
+//  清空文件夹
+    private static void clearDirectory(File directory) {
+        if (directory.exists()) {
+            File[] files = directory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        clearDirectory(file); // 递归清空子目录
+                    } else {
+                        file.delete(); // 删除文件
                     }
                 }
             }

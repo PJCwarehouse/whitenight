@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h2>目录列表</h2>
+
+<!-- 遍历 map -->
+<div th:each="entry : ${map}">
+    <!-- 用户名 -->
+    <h3 th:text="${entry.key}"></h3>
+
+    <!-- 用户的目录列表 -->
+    <table border="1">
+        <thead>
+        <tr>
+            <th>目录列表</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 遍历每个用户的目录列表 -->
+        <tr th:each="directory : ${entry.value}">
+            <td>
+                <a th:href="@{/list(parent_tableId=${directory.id})}" th:text="${directory.directoryName}"></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <br/> <!-- 添加一个换行符以便区分不同用户的目录列表 -->
+</div>
+
+</body>
+</html>

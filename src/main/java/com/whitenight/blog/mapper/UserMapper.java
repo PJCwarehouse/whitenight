@@ -14,6 +14,8 @@ public interface UserMapper {
     @Select("SELECT * FROM users WHERE username = #{username}")
     UserEntity getInfoByUserName(@Param("username") String username);
 
+    @Select("SELECT * FROM users WHERE id = #{id}")
+    UserEntity selectUserNameById(@Param("id") int userId);
 
     @Insert("insert into users(username,password)values(#{username},#{password})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")//想一想怎么能把自增的id取出来

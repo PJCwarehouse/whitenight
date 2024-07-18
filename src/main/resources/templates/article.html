@@ -30,6 +30,27 @@
             left: 10px;
             cursor: pointer;
         }
+        #return-home {
+            position: absolute;
+            top: 90px;
+            left: 10px;
+            cursor: pointer;
+        }
+
+        .edit-button {
+            position: absolute;
+            top: 90px; /* 更新位置使其与返回主页按钮平行 */
+            right: 10px;
+            cursor: pointer;
+            background-color: white; /* 背景颜色为纯白 */
+            color: black; /* 字体颜色为黑色 */
+            border: 1px solid black; /* 添加边框，使按钮更加明显 */
+            padding: 5px 10px; /* 添加内边距使按钮更易点击 */
+            border-radius: 5px; /* 添加圆角使按钮更美观 */
+        }
+        .edit-button:hover {
+            background-color: #f0f0f0; /* 鼠标悬停时，背景颜色稍微变化 */
+        }
         pre {
             text-align: left;
         }
@@ -104,6 +125,7 @@
 <div th:replace="comm/header :: header"></div>
 <body>
 <a id="return-home" href="/page/1">返回主页</a>
+<button  class="edit-button" th:if="${article.author == username}" th:id="'edit-' + ${article.id}" >编辑文章</button>
 
 <article class="main-content post-page">
     <div class="post-header">
@@ -142,6 +164,14 @@
 
 <!-- 添加JavaScript代码 -->
 <script>
+    document.querySelectorAll('.edit-button').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            event.stopPropagation();
+            var articleId = button.id.split('-')[1];
+            window.location.href = '/editArticle?articleId=' + articleId + '&type=1';
+        });
+    });
+
     function confirmSubmitComments(button) {
         var uesrID = $(button).data("user-id");
         var username = $(button).data("username");

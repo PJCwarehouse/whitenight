@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
       /*  (scanBasePackages="controller.com.WhiteNightApplication.blog.UserController")*/
-@MapperScan(basePackages = "mapper.com.WhiteNightApplication.blog.UserMapper")
+//@MapperScan(basePackages = "mapper.com.WhiteNightApplication.blog.UserMapper")
 public class WhiteNightApplication {
 
     public static void main(String[] args) {

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>File Upload and Download</title>
+</head>
+<body>
+<h1>文件上传</h1>
+<form method="POST" enctype="multipart/form-data" action="/fileUpload">
+  <input type="file" name="file"/>
+  <!-- 添加一个隐藏的输入字段来传递目录ID -->
+  <input type="hidden" name="directoryId" th:value="${directoryId}"/>
+  <button type="submit">上传</button>
+</form>
+<p th:text="${message}"></p>
+
+<div th:if="${fileUrl}">
+  <h2>文件下载地址:</h2>
+  <a th:href="${fileUrl}" th:text="${fileUrl}"></a>
+</div>
+
+<h2 th:text="'目录名: ' + ${directoryName}"></h2><table border="1">
+  <thead>
+  <tr>
+    <th>文件ID</th>
+    <th>名称</th>
+    <th>时间</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="directoryData : ${directoryDatas}">
+    <td th:text="${directoryData.directoryId}"></td>
+    <td>
+      <a th:href="${directoryData.url}" th:text="${directoryData.name}" target="_blank">点击这里</a>
+    </td>
+    <td th:text="${directoryData.time}"></td>
+  </tr>
+  </tbody>
+</table>
+
+</body>
+</html>

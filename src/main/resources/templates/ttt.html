@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+<div th:each="entry : ${map}">
+    <h3 th:text="${entry.key}"></h3>
+
+    <table border="1">
+        <thead>
+        <tr>
+            <th>目录名</th>
+            <th>目录地址</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 遍历每个用户的目录列表 -->
+        <tr th:each="directory : ${entry.value}">
+            <td th:text="${directory.directoryName}"></td>
+            <td>
+                <a th:href="@{/fileList(directoryId=${directory.id})}" >点击访问</a>
+            </td>
+        </tr>
+        </tbody>
+      </table>
+      <br/>
+</div>
+</body>
+</html>

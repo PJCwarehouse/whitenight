@@ -12,6 +12,20 @@
             height: 100vh;
             margin: 0;
             background-color: #f5f5f5;
+            flex-direction: column; /* 修改为列方向排列 */
+
+        }
+        #return-home {
+            display: block;
+            font-size: 16px;
+            color: #007bff;
+            text-decoration: none;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        #return-home:hover {
+            text-decoration: underline;
         }
         .container {
             text-align: center;
@@ -20,9 +34,9 @@
             padding: 50px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
-            position: absolute;
+            /*position: absolute;*/
             top: 30%;
-            transform: translateY(-30%);
+            /*transform: translateY(-30%);*/
         }
         h1 {
             margin-bottom: 20px;
@@ -110,9 +124,12 @@
             overflow-y: auto;
             font-size: 14px;
         }
+
+
     </style>
 </head>
 <body>
+<div><a id="return-home" href="/page/1">返回主页</a></div>
 
 <div class="container">
     <h1>PDF转TXT文件</h1>
@@ -137,10 +154,12 @@
 </div>
 
 <script>
+    //数组的作用是上传文件
     let filesToUpload = [];
 
     let dropZone = document.getElementById('dropZone');
     let fileList = document.getElementById('fileList');
+    //fileList的作用是展示现在已经选择的文件
 
     let completedFiles = -10;
 
@@ -251,8 +270,8 @@
     // webSocket部分---------------------------------------------------------------------
     var websocket = null;
     if ('WebSocket' in window) {
-        // websocket = new WebSocket('wss://www.masteryy.top:8443/webSocket');
-        websocket = new WebSocket('wss://localhost:8443/webSocket');
+        websocket = new WebSocket('wss://www.masteryy.top:8443/webSocket');
+        // websocket = new WebSocket('wss://localhost:8443/webSocket');
     } else {
         alert('该浏览器不支持 WebSocket!');
     }
