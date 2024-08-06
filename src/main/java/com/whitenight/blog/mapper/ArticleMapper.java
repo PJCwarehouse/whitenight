@@ -9,12 +9,16 @@ import java.util.List;
 
 @Mapper
 public interface ArticleMapper {
+
+//    插入文章数据
     @Insert("insert into article(title,content,time,author,userId)values(#{title},#{content},#{time},#{author},#{userId})")
     void saveInfo(@Param("title") String title, @Param("content") String content, @Param("time") Date time, @Param("author") String author, @Param("userId") int userId);
 
+//    查看所有文章数据
     @Select("select * from article")
     List<ArticleEntity> selectAllArticles();
 
+//    查看文章数据
     @Select("select * from article where id = #{id}")
     ArticleEntity selectArticlesByArticleId(@Param("id") int id);
 

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+      /* 样式部分 */
+      body {
+        font-family: Arial, sans-serif;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch; /* 垂直方向上拉伸以适应内容 */
+      }
+
+      .toolbar {
+        display: flex;
+        justify-content: space-between; /* 左右两侧对齐 */
+        align-items: center; /* 垂直居中 */
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-bottom: 1px solid #ccc;
+      }
+
+      .toolbar button {
+        margin-right: 10px;
+        padding: 5px 10px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+      }
+
+      .toolbar button:hover {
+        background-color: #0056b3;
+      }
+
+      .toolbar .search {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+      }
+
+      .toolbar input[type="text"] {
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+      }
+
+      .toolbar .view-buttons button {
+        background-color: #f0f0f0;
+        color: #000;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+      }
+
+      .toolbar .view-buttons button:hover {
+        background-color: #ccc;
+      }
+
+      /*返回和路径*/
+      .link {
+        display: flex; /* 假设 .link 是一个 Flex 容器 */
+        align-items: center; /* 垂直居中 */
+      }
+
+      .link a {
+        text-decoration: none;
+        color: #007bff; /* 按钮颜色 */
+        margin-right: 10px; /* 按钮右侧间距 */
+      }
+
+      .link .path {
+        flex: 1; /* 让路径部分占据剩余空间 */
+        text-align: right; /* 右对齐 */
+        margin-top: 0; /* 根据需要调整间距 */
+      }
+
+      .link .path p {
+        margin-bottom: 5px; /* 段落底部间距 */
+      }
+
+      .link .path span {
+        margin-left: 5px; /* 分段路径之间的间距 */
+      }
+
+      .link .path a {
+        text-decoration: none; /* 去除链接的下划线 */
+        color: #007bff; /* 链接颜色 */
+      }
+
+      .link .path a:hover {
+        text-decoration: underline; /* 鼠标悬停时添加下划线 */
+      }
+
+      .file-container {
+        padding: 10px;
+      }
+
+      .file-item {
+        cursor: pointer;
+        padding: 10px;
+        border: 1px solid #ccc;
+        margin: 5px;
+      }
+
+      .file-item.selected {
+        /*background-color: #e0e0e0; !* 设置选中状态的背景色 *!*/
+        background-color: yellow;
+      }
+
+      .grid-view {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 150px);
+        gap: 10px;
+      }
+
+      .grid-view .file-item {
+        width: 150px;
+        height: 150px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        box-sizing: border-box;
+      }
+
+      /* 默认列表视图样式 */
+      .list-view .file-details {
+        display: block; /* 显示文件详细信息 */
+      }
+
+      /* 网格视图样式 */
+      .grid-view .file-details {
+        display: none; /* 隐藏文件详细信息 */
+      }
+
+      .list-view .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        border: 1px solid #ccc;
+        margin: 5px;
+      }
+
+      .list-view .file-item .file-details {
+        flex-shrink: 0; /* 防止详情部分扩展 */
+        margin-left: 10px;
+      }
+
+      /* 弹出框的样式 */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+      }
+
+      .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 300px;
+        text-align: center;
+      }
+
+      .modal-content input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+      }
+
+      .modal-content button {
+        padding: 10px 20px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+      }
+
+      .modal-content button:hover {
+        background-color: #0056b3;
+      }
+
+      .modal-content .cancel-btn {
+        background-color: #ccc;
+      }
+
+      .modal-content .cancel-btn:hover {
+        background-color: #999;
+      }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- 顶部工具栏 -->
+  <div class="toolbar">
+    <div class="search">
+      <input type="text" placeholder="搜索您的文件">
+      <button>🔍</button>
+    </div>
+    <button onclick="performAction('download')">Download Select</button>
+    <div class="view-buttons">
+      <button onclick="toggleView('list')">列表视图</button>
+      <button onclick="toggleView('grid')">网格视图</button>
+    </div>
+    <!-- 按钮和搜索框等 -->
+  </div>
+  <div class="link">
+    <a th:href="@{/returnParentDisplay(directoryId=${parentId})}">返回</a>
+    <div class="path">
+      <p>路径:
+        <span th:each="segment, iterStat : ${pathSegments}">
+                    <span th:if="${!iterStat.first}">/</span>
+                    <a th:href="@{/publicDirectory(parentId=${segment.parentId})}" th:text="${segment.name}"></a>
+                </span>
+      </p>
+    </div>
+  </div>
+
+  <!-- 文件显示区域 -->
+  <div id="file-container" class="list-view file-container">
+    <!-- 显示文件夹 -->
+    <div th:each="directory : ${directoryList}">
+      <div class="file-item" th:onclick="'toggleSelect(event, this, \'directory\', ' + ${directory.id} + ')'">
+        <input type="hidden" name="directoryId" th:value="${directory.id}">
+        <!--                通过 event.stopPropagation() 方法，阻止事件冒泡，可以确保点击文件名链接时不会触发外层 div 的点击事件-->
+        <!--                从而避免不必要的选中状态切换。在这个场景中非常重要，因为你希望点击链接时跳转，而不是切换选中状态。-->
+        <a class="file-info" th:href="@{/publicDirectory(parentId=${directory.id})}" th:text="${directory.name}" onclick="event.stopPropagation()"></a>
+        <!--                <div class="file-details">-->
+        <!--                    <span>目录大小: 100MB</span>-->
+        <!--                </div>-->
+      </div>
+    </div>
+    <!-- 显示文件 -->
+    <div th:each="file : ${fileList}">
+      <div class="file-item" th:onclick="'toggleSelect(event, this, \'file\', ' + ${file.id} + ')'">
+        <input type="hidden" name="fileId" th:value="${file.id}">
+        <div class="file-info" th:text="${file.name}"></div>
+        <div class="file-details">
+          <span>文件大小: <span th:text="${file.size} + ' ' + ${file.sizeUnit}"></span></span>
+          <span>上传时间:</span><span th:text="${file.time}"></span>
+        </div>
+        <div class="file-actions">
+          <!-- 复制下载链接 -->
+          <a href="#" th:attr="data-url=${file.url}" onclick="copyDownloadLink(event, this)">复制下载链接</a>
+          <!-- 下载 -->
+          <a th:href="${file.url}" target="_blank" onclick="event.stopPropagation()">下载</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- 新建文件夹弹出框 -->
+  <div id="createFolderModal" class="modal">
+    <div class="modal-content">
+      <span>Name your new directory.</span>
+      <input type="text" id="newFolderName" placeholder="输入文件夹名称">
+      <button onclick="createFolder()">CREATE</button>
+      <button class="cancel-btn" onclick="closeCreateFolderModal()">CANCEL</button>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  let selectedFiles = [];
+  let selectedDirectories = [];
+
+  // 选择文件和目录
+  function toggleSelect(event, element, type, id) {
+    // 切换选中状态
+    element.classList.toggle('selected');
+
+    // 根据类型执行不同的操作
+    if (type === 'directory') {
+      // 处理选中文件夹的逻辑
+      if (selectedDirectories.includes(id)) {
+        selectedDirectories = selectedDirectories.filter(dirId => dirId !== id);
+      } else {
+        selectedDirectories.push(id);
+      }
+    } else if (type === 'file') {
+      // 处理选中文件的逻辑
+      if (selectedFiles.includes(id)) {
+        selectedFiles = selectedFiles.filter(fileId => fileId !== id);
+      } else {
+        selectedFiles.push(id);
+      }
+    }
+
+    console.log('Selected Files:', selectedFiles);
+    console.log('Selected Directories:', selectedDirectories);
+  }
+
+  // 下载或者删除文件和目录
+  function performAction(action) {
+    if (selectedFiles.length === 0 && selectedDirectories.length === 0) {
+      alert('请至少选择一个文件或目录');
+      return;
+    }
+    fetch(`/perform-${action}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ files: selectedFiles, directories: selectedDirectories })
+    }).then(response => {
+      if (response.ok) {
+        alert('正在下载');
+        return response.blob();
+      } else {
+        alert('操作失败');
+      }
+    }).then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'download.zip';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        window.location.reload();
+    });
+  }
+
+  // 复制下载链接到剪贴板
+  function copyDownloadLink(event, element) {
+    event.stopPropagation();
+
+    event.preventDefault();
+    const url = element.getAttribute('data-url');
+
+    // 创建一个临时的输入元素
+    const tempInput = document.createElement('input');
+    tempInput.style.position = 'absolute';
+    tempInput.style.left = '-9999px';
+    tempInput.value = url;
+
+    // 将临时输入元素添加到文档
+    document.body.appendChild(tempInput);
+
+    // 选择并复制输入元素的内容
+    tempInput.select();
+    document.execCommand('copy');
+
+    // 移除临时输入元素
+    document.body.removeChild(tempInput);
+
+    alert('下载链接已复制到剪贴板: ' + url);
+  }
+</script>
+</body>
+</html>

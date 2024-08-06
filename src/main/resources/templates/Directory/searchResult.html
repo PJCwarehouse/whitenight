@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="contentFragment">
+    <a href="#" th:data-id="${returnsId}" onclick="loadDirectoryContent(event)">返回</a>
+    <div class="toolbar">
+        <div class="search">
+            <input type="text" id="searchInput" placeholder="搜索您的文件目录">
+            <button onclick="search()">🔍</button>
+        </div>
+        <button onclick="performAction('download')">下载选中项</button>
+    </div>
+    <!-- 展示区域 -->
+    <div id="file-container" class="list-view file-container">
+        <!--                目录展示区域-->
+        <div th:each="directory : ${directoryList}">
+            <!-- 如果 directory.visibleType = 1 或者 directory.userId = currentUserId 才展示 -->
+            <div th:if="${directory.visibleType == 1 || directory.userId == currentUserId}">
+                <!-- 点击file-item区域即可选中 -->
+                <div class="file-item" th:onclick="'toggleSelect(event, this, \'directory\', ' + ${directory.id} + ')'">
+                    <!-- 点击目录名部分跳转 -->
+                    <a class="file-info" href="#" th:data-id="${directory.id}" th:text="${directory.name}" onClick="loadDirectoryContent(event)"></a>
+                    <div style="width: 80%; text-align: center;">
+                        <span style="display: inline-block; margin: 0 auto;">
+                            所属用户为：<span th:text="${directory.url}"></span>
+                        </span>
+                    </div>
+                    <!-- 展示目录可视性 -->
+                    <span class="visibility-info" th:text="${directory.visibleType == 1 ? '当前目录为：公开' : '当前目录为：私密'}"></span>
+                    <!-- 如果该目录是用户自己的才有权利更改可见性 -->
+                    <div class="toggle-container" th:if="${directory.userId == currentUserId}">
+                        <!-- 点击更改目录可视性 -->
+                        <button class="toggle-button" th:data-id="${directory.id}" th:data-visible="${directory.visibleType}" onClick="turnVisibleType(event)"
+                                th:utext="${directory.visibleType == 1 ? '切换为私密' : '切换为公开'}"></button> <!-- 添加按钮 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--                文件显示区域-->
+<!--        <div th:each="file : ${fileList}">-->
+<!--            <div class="file-item" th:onclick="'toggleSelect(event, this, \'file\', ' + ${file.id} + ')'">-->
+<!--                <input type="hidden" name="fileId" th:value="${file.id}">-->
+<!--                <div class="file-info" th:text="${file.name}"></div>-->
+<!--                <div class="file-details">-->
+<!--                    <span>文件大小: <span th:text="${file.size} + ' ' + ${file.sizeUnit}"></span></span>-->
+<!--                    <span>上传时间:</span><span th:text="${file.time}"></span>-->
+<!--                </div>-->
+<!--                <div class="file-actions">-->
+<!--                    <a href="#" th:attr="data-url=${file.url}" onclick="copyDownloadLink(event, this)">复制下载链接</a>-->
+<!--                    <a th:href="${file.url}" target="_blank" onclick="event.stopPropagation()">下载</a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+    </div>
+</div>
+</body>
+</html>

@@ -2,35 +2,179 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>文件管理</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .search input {
+            padding: 5px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .search button {
+            padding: 5px 10px;
+            margin-left: 5px;
+            font-size: 14px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .toolbar button {
+            padding: 10px 20px;
+            font-size: 14px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .link a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .link a:hover {
+            text-decoration: underline;
+        }
+        h2, h3 {
+            color: #4CAF50;
+        }
+        .file-info {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .file-info:hover {
+            text-decoration: underline;
+        }
+        .file-container {
+            margin-top: 20px;
+        }
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .file-item.selected {
+            /*background-color: #e0e0e0; !* 设置选中状态的背景色 *!*/
+            background-color: yellow;
+        }
+
+        .file-details {
+            margin-left: 20px;
+        }
+    </style>
 </head>
 <body>
+<div class="container">
+    <div class="link">
+        <a id="return-home" href="/page/1">返回主页</a>
+    </div>
+    <!-- 顶部工具栏 -->
+    <div class="toolbar">
+        <div class="search">
+            <input type="text" placeholder="搜索您的文件">
+            <button>🔍</button>
+        </div>
+        <button onclick="performAction()">Download Selected</button>
+    </div>
 
-<h2>目录列表</h2>
+    <h2>目录列表</h2>
 
-<!-- 遍历 map -->
-<div th:each="entry : ${map}">
-    <!-- 用户名 -->
-    <h3 th:text="${entry.key}"></h3>
+    <!-- 遍历 map -->
+    <div th:each="entry : ${map}">
+        <!-- 用户名 -->
+        <h3 th:text="${entry.key}"></h3>
 
-    <!-- 用户的目录列表 -->
-    <table border="1">
-        <thead>
-        <tr>
-            <th>目录列表</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!-- 遍历每个用户的目录列表 -->
-        <tr th:each="directory : ${entry.value}">
-            <td>
-                <a th:href="@{/list(parent_tableId=${directory.id})}" th:text="${directory.directoryName}"></a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <br/> <!-- 添加一个换行符以便区分不同用户的目录列表 -->
+        <!-- 用户的目录列表 -->
+        <div class="file-container">
+            <div th:each="directory : ${entry.value}">
+                <div class="file-item" th:onclick="'toggleSelect(event, this, \'directory\', ' + ${directory.id} + ')'">
+                    <input type="hidden" name="directoryId" th:value="${directory.id}">
+                    <a class="file-info" th:href="@{/publicDirectory(parentId=${directory.id})}" th:text="${directory.name}" onclick="event.stopPropagation()"></a>
+<!--                    <div class="file-details">-->
+<!--                        <span>目录大小: 100MB</span>-->
+<!--                    </div>-->
+                </div>
+            </div>
+        </div>
+
+
+    </div>
 </div>
 
+<script>
+    let selectedFiles = [];
+    let selectedDirectories = [];
+    // 选择和目录
+    function toggleSelect(event, element, type, id) {
+        element.classList.toggle('selected');
+        if (type === 'directory') {
+            if (selectedDirectories.includes(id)) {
+                selectedDirectories = selectedDirectories.filter(dirId => dirId !== id);
+            } else {
+                selectedDirectories.push(id);
+            }
+        }
+        console.log('Selected directories:', selectedDirectories);
+    }
+
+    // 下载或者删除文件和目录
+    function performAction() {
+        if (selectedDirectories.length === 0) {
+            alert('请至少选择一个目录下载');
+            return;
+        }
+        fetch(`/perform-download`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ files: selectedFiles, directories: selectedDirectories })
+        }).then(response => {
+            if (response.ok) {
+                alert('正在下载');
+                return response.blob();
+            } else {
+                alert('操作失败');
+            }
+        }).then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'download.zip';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                window.location.reload();
+        });
+    }
+</script>
 </body>
 </html>

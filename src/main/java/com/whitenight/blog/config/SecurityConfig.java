@@ -26,7 +26,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()//表示开启权限设置
                 .antMatchers("login","/success","/error","/articles",
-                        "../lib/css/bootstrap.min.css","../bootstrap.bundle.min.js","/signup","/loginError","/register","/signupError","signupError","/comm/header")
+                        "../lib/css/bootstrap.min.css","../bootstrap.bundle.min.js","/signup",
+                        "/loginError","/register","/signupError","signupError","/comm/header")
                 .permitAll() //error 放开权限 ，不然登陆失败跳转不过来
                 .antMatchers("/home page").hasAnyRole("visitor","admin")
                 .antMatchers("/articles management").hasRole("admin");//数据库权限名加了ROLE前缀，这里用hasRole方便，不用hasAnyAuthority

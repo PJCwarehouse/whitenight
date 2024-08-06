@@ -18,6 +18,13 @@ public class ArticleService {
     @Resource
     CommentMapper commentMapper;
 
+    public void deleteUsersArticle(int userId) {
+        List<ArticleEntity> articleEntities = articleMapper.selectArticlesByUserId(userId);
+        for(ArticleEntity articleEntity : articleEntities){
+            articleMapper.deleteArticle(articleEntity.getId());
+        }
+    }
+
     public void Insert(String title, String content, Date time,String author,int userId) {
         articleMapper.saveInfo(title, content,time,author,userId);
     }

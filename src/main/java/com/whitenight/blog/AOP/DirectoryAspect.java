@@ -8,7 +8,7 @@
 //import org.aspectj.lang.annotation.Aspect;
 //import org.aspectj.lang.annotation.Before;
 //import org.springframework.stereotype.Component;
-//import org.springframework.ui.Model;
+//import org.springframework.ui.Article;
 //
 //import java.util.List;
 //
@@ -26,7 +26,7 @@
 //
 ////    跳转个人目录列表页前的工作
 //    @Before("execution(* com.whitenight.blog.controller.DirectoryController.directoryList(..)) && args(model,..)")
-//    public void beforeDirectoryList(JoinPoint joinPoint, Model model) {
+//    public void beforeDirectoryList(JoinPoint joinPoint, Article model) {
 //        int userId = userService.getId();
 //        List<DirectoryEntity> list = directoryService.getDirectoryListByUserId(userId);
 //        model.addAttribute("list", list);
@@ -34,7 +34,7 @@
 //
 ////    跳转到目录对应的文件列表
 //    @Before("execution(* com.whitenight.blog.controller.DirectoryController.fileList(..)) && args(directoryId, model)")
-//    public void beforeFileList(JoinPoint joinPoint, int directoryId, Model model) {
+//    public void beforeFileList(JoinPoint joinPoint, int directoryId, Article model) {
 //        List<DirectoryDataEntity> directoryDatas = directoryService.getDirectoryDataList(directoryId);
 //        String directoryName = directoryService.getDirectoryNameById(directoryId);
 //        model.addAttribute("directoryDatas", directoryDatas);

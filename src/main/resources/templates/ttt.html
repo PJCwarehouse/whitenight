@@ -1,32 +1,262 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Manager</title>
+    <style>
+        /* 样式部分 */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch; /* 垂直方向上拉伸以适应内容 */
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between; /* 左右两侧对齐 */
+            align-items: center; /* 垂直居中 */
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .toolbar button {
+            margin-right: 10px;
+            padding: 5px 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .toolbar button:hover {
+            background-color: #0056b3;
+        }
+
+        .toolbar .search {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .toolbar input[type="text"] {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .toolbar .view-buttons button {
+            background-color: #f0f0f0;
+            color: #000;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .toolbar .view-buttons button:hover {
+            background-color: #ccc;
+        }
+
+        .link {
+            display: flex; /* 假设 .link 是一个 Flex 容器 */
+            align-items: center; /* 垂直居中 */
+        }
+
+        .link a {
+            text-decoration: none;
+            color: #007bff; /* 按钮颜色 */
+            margin-right: 10px; /* 按钮右侧间距 */
+        }
+
+        .link .path {
+            flex: 1; /* 让路径部分占据剩余空间 */
+            text-align: right; /* 右对齐 */
+            margin-top: 0; /* 根据需要调整间距 */
+        }
+
+        .link .path p {
+            margin-bottom: 5px; /* 段落底部间距 */
+        }
+
+        .link .path span {
+            margin-left: 5px; /* 分段路径之间的间距 */
+        }
+
+        .link .path a {
+            text-decoration: none; /* 去除链接的下划线 */
+            color: #007bff; /* 链接颜色 */
+        }
+
+        .link .path a:hover {
+            text-decoration: underline; /* 鼠标悬停时添加下划线 */
+        }
+
+        .file-container {
+            padding: 10px;
+        }
+
+        .file-item {
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin: 5px;
+        }
+
+        .grid-view .file-item {
+            display: inline-block;
+            width: 150px;
+            text-align: center;
+        }
+
+        .list-view .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin: 5px;
+        }
+
+        .list-view .file-item .file-info {
+            flex: 1; /* 让文件名占据剩余空间 */
+            max-width: 300px; /* 设置最大宽度为300像素，可以根据需要调整 */
+            overflow: hidden; /* 超出部分隐藏 */
+            text-overflow: ellipsis; /* 用省略号表示超出部分 */
+            white-space: nowrap; /* 防止文本换行 */
+        }
+
+
+        .list-view .file-item .file-details {
+            flex-shrink: 0; /* 防止详情部分扩展 */
+            margin-left: 10px;
+        }
+
+    </style>
 </head>
 <body>
+<input type="hidden" id="parent_tableId" th:value="${parent_tableId}"/>
+<!-- 顶部工具栏 -->
+<div class="container">
+    <!-- 顶部工具栏 -->
+    <div class="toolbar">
+        <button onclick="document.getElementById('fileInput').click()">上传</button>
+        <input type="file" id="fileInput" accept=".pdf" multiple style="display: none;">
 
-<div th:each="entry : ${map}">
-    <h3 th:text="${entry.key}"></h3>
+        <button onclick="createFolder()">新建文件夹</button>
+        <div class="search">
+            <input type="text" placeholder="搜索您的文件">
+            <button>🔍</button>
+        </div>
+        <button onclick="performAction('delete')">Delete Selected</button>
+        <button onclick="performAction('download')">Download Selected</button>
+        <div class="view-buttons">
+            <button onclick="switchView('grid')">网格视图</button>
+            <button onclick="switchView('list')">列表视图</button>
+        </div>
+        <!-- 按钮和搜索框等 -->
+    </div>
+    <div class="link">
+        <a th:href="@{/returnParentTable(directoryId=${parent_tableId})}">返回</a>
+        <div class="path">
+            <p>路径:
+                <span th:each="segment, iterStat : ${pathSegments}">
+                    <span th:if="${!iterStat.first}">/</span>
+                    <a th:href="@{/userDirectory(parent_tableId=${segment.parentId})}" th:text="${segment.name}"></a>
+                </span>
+            </p>
+        </div>
+    </div>
 
-    <table border="1">
-        <thead>
-        <tr>
-            <th>目录名</th>
-            <th>目录地址</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!-- 遍历每个用户的目录列表 -->
-        <tr th:each="directory : ${entry.value}">
-            <td th:text="${directory.directoryName}"></td>
-            <td>
-                <a th:href="@{/fileList(directoryId=${directory.id})}" >点击访问</a>
-            </td>
-        </tr>
-        </tbody>
-      </table>
-      <br/>
+    <!-- 文件显示区域 -->
+    <div id="file-container" class="list-view file-container" th:each="directory : ${directoryList}">
+        <div class="file-item" onclick="toggleSelect(this, 'Big Bunny.mp4')">
+            <input type="hidden" name="fileId" th:value="${directory.id}">
+            <div class="file-info" th:text="${directory.directoryName}">Big Bunny.mp4</div>
+            <div class="file-details">
+                <span>文件大小: 100MB</span>
+<!--                <span>上传时间:</span><span th:text="${directory.time}"></span>-->
+            </div>
+        </div>
+    </div>
+
 </div>
+
+<!-- JavaScript部分 -->
+<script>
+    function uploadFiles() {
+        var files = document.getElementById('fileInput').files;
+        let formData = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            console.log("上传的文件是:", files[i].name);
+            // 这里可以添加将文件发送到服务器的代码
+            formData.append('file', files[i]);
+        }
+        let parent_tableId = document.getElementById('parent_tableId').value;
+        formData.append('parent_tableId', parent_tableId);
+        fetch('/fileUpload', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.error('文件上传成功');
+                } else {
+                    console.error('文件上传失败');
+                }
+            })
+            .catch(error => console.error('发生错误:', error));
+    }
+    document.getElementById('fileInput').addEventListener('change', uploadFiles);
+
+    // 监听文件选择器的变化，一旦用户选择了文件，就调用uploadFiles函数
+
+    function createFolder() {
+        // 新建文件夹的逻辑
+        alert('新建文件夹');
+    }
+
+    let selectedFiles = [];
+
+    function toggleSelect(element, fileName) {
+        element.classList.toggle('selected');
+        if (selectedFiles.includes(fileName)) {
+            selectedFiles = selectedFiles.filter(file => file !== fileName);
+        } else {
+            selectedFiles.push(fileName);
+        }
+        console.log(selectedFiles);
+    }
+
+    function performAction(action) {
+        fetch(`/perform-${action}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ files: selectedFiles })
+        }).then(response => {
+            if (response.ok) {
+                console.log(`${action} successful`);
+            } else {
+                console.error(`${action} failed`);
+            }
+        });
+    }
+
+    function switchView(view) {
+        const fileContainer = document.getElementById('file-container');
+        if (view === 'grid') {
+            fileContainer.classList.add('grid-view');
+            fileContainer.classList.remove('list-view');
+        } else {
+            fileContainer.classList.add('list-view');
+            fileContainer.classList.remove('grid-view');
+        }
+    }
+</script>
 </body>
 </html>

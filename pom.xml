@@ -91,7 +91,7 @@
 			<scope>test</scope>
 		</dependency>
 
-
+<!--		实体层的lombok引入@Data注解-->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

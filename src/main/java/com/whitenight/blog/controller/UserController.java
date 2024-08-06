@@ -2,11 +2,8 @@ package com.whitenight.blog.controller;
 
 import com.whitenight.blog.entity.UserEntity;
 import com.whitenight.blog.mapper.UserMapper;
-import com.whitenight.blog.service.DirectoryService;
 import com.whitenight.blog.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,13 +26,13 @@ public class UserController {
 
     @RequestMapping("/login")
     public String login(){
-        return "login";
+        return "Basic/login";
     }
 
     @RequestMapping("/signup")
     public String disp(){
         System.out.println("跳转到注册页面");
-        return "signup";
+        return "Basic/signup";
     }
 
     //实现注册功能
@@ -45,14 +42,14 @@ public class UserController {
         if(StringUtils.isEmpty(username)){
             System.out.println("用户名不能为空，请重新输入");
             model.addAttribute("NullMessage", "用户名不能为空，请重新输入");
-            return "signup";
+            return "Basic/signup";
         }
 
         UserEntity userEntity = userMapper.getInfoByUserName(username);
         if(userEntity != null){
             System.out.println("用户名已存在，注册失败");
             model.addAttribute("ErrorMessage", "用户名已存在，注册失败");
-            return "signup";
+            return "Basic/signup";
         }
         System.out.println("sign:" + "/n" + username+ "/n" + password);
 
@@ -60,7 +57,7 @@ public class UserController {
 
         System.out.println("注册用户:(username:" + username + ")");
         model.addAttribute("SuccessSignMessage", "注册成功！");
-        return "login";
+        return "Basic/login";
     }
 
     //实现用户注销功能
@@ -72,14 +69,14 @@ public class UserController {
         }else {
             System.out.println("用户" + userID + "注销失败");
         }
-        return "success";
+        return "Basic/success";
     }
 
     //实现用户登出功能
     @RequestMapping(value = "logout",method = RequestMethod.POST)
     public String logout(){
         userService.logout();
-        return "login";
+        return "Basic/login";
     }
 
 }

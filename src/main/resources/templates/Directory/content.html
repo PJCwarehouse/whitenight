@@ -1,0 +1,67 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--  <title>Content</title>-->
+<!--</head>-->
+<!--<body>-->
+<div th:fragment="contentFragment">
+  <a th:href="@{/returnParentTable(directoryId=${parentId})}">返回</a>
+  <div class="view-buttons">
+    <button onclick="toggleView('list')">列表视图</button>
+    <button onclick="toggleView('grid')">网格视图</button>
+  </div>
+  <div class="toolbar">
+    <button onclick="document.getElementById('fileInput').click()">上传</button>
+    <input type="file" id="fileInput" accept=".pdf" multiple style="display: none;">
+    <button onclick="openCreateFolderModal()">新建文件夹</button>
+    <div class="search">
+      <input type="text" placeholder="搜索您的文件">
+      <button>🔍</button>
+    </div>
+    <button onclick="performAction('delete')">删除选中项</button>
+    <button onclick="performAction('download')">下载选中项</button>
+  </div>
+  <div class="link">
+    <div class="path">
+      <p>路径:
+        <span th:each="segment, iterStat : ${pathSegments}">
+                    <span th:if="${!iterStat.first}">/</span>
+                    <a th:href="@{/userDirectory(parentId=${segment.parentId})}" th:text="${segment.name}"></a>
+                </span>
+      </p>
+    </div>
+  </div>
+  <div id="file-container" class="list-view file-container">
+    <div th:each="directory : ${directoryList}">
+      <div class="file-item" th:onclick="'toggleSelect(event, this, \'directory\', ' + ${directory.id} + ')'">
+        <input type="hidden" name="directoryId" th:value="${directory.id}">
+        <a class="file-info" th:href="@{/userDirectory(parentId=${directory.id})}" th:text="${directory.name}" onclick="event.stopPropagation()"></a>
+      </div>
+    </div>
+    <div th:each="file : ${fileList}">
+      <div class="file-item" th:onclick="'toggleSelect(event, this, \'file\', ' + ${file.id} + ')'">
+        <input type="hidden" name="fileId" th:value="${file.id}">
+        <div class="file-info" th:text="${file.name}"></div>
+        <div class="file-details">
+          <span>文件大小: <span th:text="${file.size} + ' ' + ${file.sizeUnit}"></span></span>
+          <span>上传时间:</span><span th:text="${file.time}"></span>
+        </div>
+        <div class="file-actions">
+          <a href="#" th:attr="data-url=${file.url}" onclick="copyDownloadLink(event, this)">复制下载链接</a>
+          <a th:href="${file.url}" target="_blank" onclick="event.stopPropagation()">下载</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="createFolderModal" class="modal">
+    <div class="modal-content">
+      <span>请输入新文件夹名称</span>
+      <input type="text" id="newFolderName" placeholder="输入文件夹名称">
+      <button onclick="createFolder()">创建</button>
+      <button class="cancel-btn" onclick="closeCreateFolderModal()">取消</button>
+    </div>
+  </div>
+</div>
+
+<!--</body>-->
+<!--</html>-->

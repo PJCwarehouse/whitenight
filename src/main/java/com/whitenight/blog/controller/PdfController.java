@@ -62,11 +62,10 @@ public class PdfController {
     }
 
 //    上传文件
-    @PostMapping("/upload")
-    public ResponseEntity<String> upload(@RequestParam("files") List<MultipartFile> files,
+    @PostMapping("/uploadPdfFiles")
+    public ResponseEntity<String> uploadPdfFiles(@RequestParam("files") List<MultipartFile> files,
                                          @RequestParam(value = "startPage", required = false) Integer startPage,
                                          @RequestParam(value = "endPage", required = false) Integer endPage){
-
         //输入为空，走默认的 startPage<0,endPage>totalPage 的选择，直接转换所有页
         if(startPage == null){
             startPage = -1;
@@ -207,7 +206,7 @@ public class PdfController {
         }
     }
 
-//  清空文件夹
+//  上传文件之前清空旧文件夹内容
     private static void clearDirectory(File directory) {
         if (directory.exists()) {
             File[] files = directory.listFiles();
@@ -222,8 +221,8 @@ public class PdfController {
             }
         }
     }
-//  获取pdf页数
 
+//  获取pdf页数
     private int getPdfPageCount(File file) {
         try (PDDocument document = PDDocument.load(file)) {
             return document.getNumberOfPages();

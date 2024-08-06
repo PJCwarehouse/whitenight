@@ -33,7 +33,7 @@ public class ArticleController {
     @RequestMapping("/articles publish")
     public String art(){
         System.out.println("跳转到发布文章界面");
-        return "articles publish";
+        return "Article/articles publish";
     }
 
     //发布文章
@@ -52,7 +52,6 @@ public class ArticleController {
     }
 
     //返回首页
-
     @GetMapping(value = "/page/{p}")
     public String index(@RequestParam(name = "SuccessSubmitted", required = false) String SuccessSubmitted,
                         @RequestParam(name = "NoPermission", required = false) String NoPermission,
@@ -76,7 +75,7 @@ public class ArticleController {
             System.out.println("用户：" + userid + "，权限不足，被拒绝访问管理界面" );
         }
         System.out.println("分页获取文章信息: 页码 "+page+",条数 "+count);
-        return "index";
+        return "Article/index";
     }
 
 
@@ -93,7 +92,7 @@ public class ArticleController {
         }
 
         System.out.println("跳转到文章管理界面");
-        return "articles management";
+        return "Article/articles management";
     }
 
     //查看文章
@@ -125,14 +124,14 @@ public class ArticleController {
         model.addAttribute("userid",userid);
         model.addAttribute("username",username);
 
-        return "article";
+        return "Article/article";
     }
 
     //删除文章
     @RequestMapping(value = "/deleteArticle")
     public String deleteArticle(@RequestParam(name = "articleId") int articleID){
         articleService.deleteArticle(articleID);
-        return "success";
+        return "Basic/success";
     }
 
     //进入编辑文章页面
@@ -141,7 +140,7 @@ public class ArticleController {
         ArticleEntity articleEntity = articleService.selectArticlesByArticleId(articleID);
         model.addAttribute("article", articleEntity);
         model.addAttribute("type", type);
-        return "editArticle";
+        return "Article/editArticle";
     }
 
     //更新文章

@@ -20,30 +20,18 @@ public class HtmlController {
 
     @RequestMapping("/success")
     public String success(){
-        return "success";
+        return "Basic/success";
     }
 
     @RequestMapping("/loginError")
     public String loginError(){
-        return "loginError";
-    }
-
-    @RequestMapping("/home page")
-    public String home(){
-        System.out.println("跳转到主页");
-        return "home page";
-    }
-
-    @RequestMapping("/test")
-    public String test(){
-        return "个人主页测试版";
+        return "Basic/loginError";
     }
 
     @RequestMapping("/NoPermissions")
     public String NoPermissions(){
-        return "NoPermissions";
+        return "Basic/NoPermissions";
     }
-
 
     @RequestMapping("/personalHome")
     public String personalHome(Model model){
@@ -53,6 +41,6 @@ public class HtmlController {
         model.addAttribute("userId", userId);
         model.addAttribute("username", username);
         model.addAttribute("articles", articles);
-        return "personalHome";
+        return "Basic/personalHome";
     }
 }

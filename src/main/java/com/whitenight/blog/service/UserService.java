@@ -1,17 +1,15 @@
 package com.whitenight.blog.service;
 
-import com.whitenight.blog.entity.DirectoryEntity;
+import com.whitenight.blog.entity.DocumentEntity;
 import com.whitenight.blog.entity.UserEntity;
-import com.whitenight.blog.mapper.ArticleMapper;
-import com.whitenight.blog.mapper.CommentMapper;
-import com.whitenight.blog.mapper.DirectoryMapper;
-import com.whitenight.blog.mapper.UserMapper;
+import com.whitenight.blog.mapper.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -22,8 +20,9 @@ public class UserService implements UserDetailsService {
     @Resource
     private CommentMapper commentMapper;
     @Resource
-    DirectoryService directoryService;
-
+    private DocumentService documentService;
+    @Resource
+    private ArticleService articleService;
     private int id;
     private String username;
 
@@ -39,9 +38,17 @@ public class UserService implements UserDetailsService {
         if(userId == 1){
             return false;
         }
+        //注销用户时删除对应的评论
         commentMapper.deleteCommentByUserId(userId);
+        //注销用户时删除对应的权限
         userMapper.deleteUserAuthority(userId);
+        //注销用户时删除对应的文章
+        articleService.deleteUsersArticle(userId);
+        //注销用户时删除对应的目录
+        documentService.deleteUsersDocuments(userId);
+        //注销用户
         userMapper.deleteUser(userId);
+
 
         return true;
     }
@@ -54,7 +61,10 @@ public class UserService implements UserDetailsService {
         //然后将用户表对应的id和权限存入权限表里面
         userMapper.saveInfoAuthority(entity.getId(),2);
         //在注册用户的时候就创建对应的个人目录
-        directoryService.createDirectory(entity.getId(), 0, username);
+        String type = "directory";
+        Date time = new Date();//获取创建日期
+        DocumentEntity documentEntity = new DocumentEntity(type, entity.getId(), 0, username, time, 0, "B", 1);
+        documentService.insert(documentEntity);
     }
 
     public void logout(){

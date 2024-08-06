@@ -134,6 +134,7 @@
 <div class="container">
     <h1>PDF转TXT文件</h1>
     <p>通过将PDF转换为TXT来保存你的文档! 在你的PDF文档的基础上创建一个文本文件，对于存档、编辑以及更多来说是非常好的。</p>
+<!--    运行逻辑：上传按钮点击时会触发文件选择器的click事件-->
     <input type="file" id="fileInput" accept=".pdf" multiple>
     <button class="button" onclick="document.getElementById('fileInput').click()">选择文件</button>
     <div id="dropZone">上传文件或者拖拽到这里</div>
@@ -226,7 +227,7 @@
         formData.append('startPage', startPage);
         formData.append('endPage', endPage);
 
-        fetch('/upload', {
+        fetch('/uploadPdfFiles', {
             method: 'POST',
             body: formData
         })
@@ -270,11 +271,14 @@
     // webSocket部分---------------------------------------------------------------------
     var websocket = null;
     if ('WebSocket' in window) {
-        websocket = new WebSocket('wss://www.masteryy.top:8443/webSocket');
-        // websocket = new WebSocket('wss://localhost:8443/webSocket');
+        // 动态获取当前的主机和端口
+        var host = window.location.host;
+        websocket = new WebSocket('wss://' + host + '/webSocket');
+        // 需要确保WebSocket服务器和应用服务器在同一个域名和端口上运行或者配置正确的代理转发。
     } else {
         alert('该浏览器不支持 WebSocket!');
     }
+
 
     websocket.onopen = function(event) {
         console.log('建立连接');

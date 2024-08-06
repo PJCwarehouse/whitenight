@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>博文</title>
+    <script th:src="@{../../static/assets/js/jquery.min.js}"></script>
+    <script th:src="@{../../static/assets/js/layer.js}"></script>
+
+    <link rel="shortcut icon" href="../../static/user/img/bloglogo.jpg"/>
+    <link rel="apple-touch-icon" href="../../static/user/img/apple-touch-icon.png"/>
+    <title><th:block th:text="${title ?: '首页'}"></th:block></title>
+    <link href="../../static/user/css/xcode.min.css" rel="stylesheet"/>
+    <link href="../../static/user/css/style.min.css" rel="stylesheet"/>
+    <script src="../../static/assets/js/jquery.min.js"></script>
+    <script src="../../static/assets/js/amazeui.min.js"></script>
+    <link rel="stylesheet" href="../../static/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="../../static/assets/css/app.css"/>
+
+    <!-- 按钮框链接-->
+    <link rel="stylesheet" type="text/css" href="../../static/bootstrap/css/message.css"/>
+    <script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+    <script src="../../static/bootstrap/js/message.js" type="text/javascript" charset="utf-8"></script>
+    <!-- 添加模态框的CSS样式和JavaScript库（示例为Bootstrap） -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+
+        #return-home {
+            position: absolute;
+            top: 90px;
+            left: 10px;
+            cursor: pointer;
+        }
+        #return-home {
+            position: absolute;
+            top: 90px;
+            left: 10px;
+            cursor: pointer;
+        }
+
+        .edit-button {
+            position: absolute;
+            top: 90px; /* 更新位置使其与返回主页按钮平行 */
+            right: 10px;
+            cursor: pointer;
+            background-color: white; /* 背景颜色为纯白 */
+            color: black; /* 字体颜色为黑色 */
+            border: 1px solid black; /* 添加边框，使按钮更加明显 */
+            padding: 5px 10px; /* 添加内边距使按钮更易点击 */
+            border-radius: 5px; /* 添加圆角使按钮更美观 */
+        }
+        .edit-button:hover {
+            background-color: #f0f0f0; /* 鼠标悬停时，背景颜色稍微变化 */
+        }
+        pre {
+            text-align: left;
+        }
+
+        #comment-section {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .comment-title {
+            font-size: 24px;
+            text-align: center; /* 将标题置于中间 */
+        }
+
+        .comment {
+            margin-bottom: 20px;
+        }
+
+        .comment-content-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-content span {
+            font-weight: bold;
+        }
+
+        .delete-button {
+            background-color: #ff6666;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .comment-input {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+</head>
+<div th:replace="comm/header :: header"></div>
+<body>
+<a id="return-home" href="/page/1">返回主页</a>
+<button  class="edit-button" th:if="${article.author == username}" th:id="'edit-' + ${article.id}" >编辑文章</button>
+
+<article class="main-content post-page">
+    <div class="post-header">
+        <h1 class="post-title" th:text="${article.title}"></h1>
+        <div class="post-data">
+            <time  itemprop="datePublished" th:text="'发布于 '+ ${article.time}"></time>
+        </div>
+    </div>
+    <br />
+    <div id="post-content" class="post-content content" th:utext="${articleContent}"></div>
+</article>
+
+<div id="comment-section">
+    <h3 class="comment-title">评论区</h3>
+    <div th:each="comment : ${comments}" class="comment">
+        <div class="comment-content-wrapper">
+            <div class="comment-content">
+                <span th:text="${comment.username}" th:readonly="true"></span>
+                <p th:text="${comment.content}"></p>
+            </div>
+            <button onclick="confirmDeleteComment(this)" th:if="${comment.username == username}" class="delete-button" th:attr="data-comment-id=${comment.id},data-article-id=${article.id}">删除</button>
+        </div>
+    </div>
+    <!-- 新增评论输入框 -->
+    <div class="comment-input">
+        <label for="comment-content">评论内容：</label>
+        <textarea id="comment-content" name="content" placeholder="输入评论内容"></textarea>
+        <button onclick="confirmSubmitComments(this)" type="submit" th:attr="data-user-id=${userid},data-username=${username},data-article-id=${article.id}">提交评论</button>
+    </div>
+
+    <footer class="myFooter">
+        <div class="footer-title">人生当苦无妨，良人当归即好。</div>
+        <div class="icp">© 2024 / 蜀ICP备2023028036号-1</div>
+    </footer>
+</div>
+
+<!-- 添加JavaScript代码 -->
+<script>
+    document.querySelectorAll('.edit-button').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            event.stopPropagation();
+            var articleId = button.id.split('-')[1];
+            window.location.href = '/editArticle?articleId=' + articleId + '&type=1';
+        });
+    });
+
+    function confirmSubmitComments(button) {
+        var uesrID = $(button).data("user-id");
+        var username = $(button).data("username");
+        var articleID = $(button).data("article-id");
+        if($("#comment-content").val() === ""){
+            alert("抱歉，评论不能为空，请重试");
+            return;
+        }
+        var content = $("#comment-content").val(); // 获取评论内容
+
+        $.ajax({
+            type: "POST",
+            url: "/comment",
+            data: {
+                userId: uesrID, // 替换YOUR_USER_ID为实际值
+                username: username, // 替换YOUR_USERNAME为实际值
+                articleId: articleID,
+                content: content // 如果有必要，将评论内容填入此处
+            },
+            success: function(response) {
+                console.log(response);
+                $.message({content:'评论成功',time:2000})
+                setTimeout(function () {
+                    location.reload(); // 刷新当前页面;
+                }, 1000);
+            },
+            error: function(error) {
+                console.error(error);
+            }
+        });
+    }
+
+    function confirmDeleteComment(button) {
+        var commentID = $(button).data("comment-id");
+
+        $.confirm('确定删除该评论么?','提示信息',{
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+            define: function() {
+                $.message({content:'成功删除',time:2000})
+                deleteComment(commentID); // 传递 commentID 给 deleteComment
+            },
+            cancel: function() {
+                $.message({content:'取消删除',time:2000})
+            }
+        })
+    }
+
+    function deleteComment(commentID) {
+        $.ajax({
+            type: "GET",
+            url: "/deleteComment",
+            data: { commentId: commentID },
+            success: function(response) {
+                console.log(response);
+                // $.message({content:'成功删除',time:2000})
+                setTimeout(function () {
+                    location.reload(); // 刷新当前页面;
+                }, 1000);
+            },
+            error: function(error) {
+                console.error(error);
+            }
+        });
+    }
+</script>
+</body>
+</html>

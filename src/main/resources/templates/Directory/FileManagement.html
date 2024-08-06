@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../../static/bootstrap/css/message.css"/>
+    <script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+    <script src="../../static/bootstrap/js/message.js" type="text/javascript" charset="utf-8"></script>
+    <title>文件管理器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+
+            height: 100%;
+        }
+
+        .main-container {
+            height: 100%; /* 设置页面的高度为100% */
+            margin: 0; /* 去除默认的边距 */
+            display: flex; /* 使用 Flexbox 布局 */
+        }
+
+        .tree-directory {
+            width: 20%;
+            background-color: #fff;
+            padding: 20px;
+            border-right: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto; /* 如果内容过多，允许滚动 */
+        }
+
+        .tree-directory ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .tree-directory li {
+            margin-bottom: 5px;
+        }
+
+        .tree-directory .folder {
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .tree-directory .folder > a::before {
+            margin-right: 5px;
+            cursor: pointer; /* 指针变为手形，表示可点击 */
+        }
+
+        .tree-directory .nested {
+            display: none;
+            margin-left: 20px;
+        }
+
+        .tree-directory .folder > .nested {
+            display: none;
+        }
+
+        .tree-directory .folder.open > .nested {
+            display: block;
+        }
+
+
+
+        .container {
+            margin: 0;
+            width: 80%;
+            /*height: 840px;*/
+            height: 100%; /* 确保与父容器同高 */
+
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .view-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .view-buttons button {
+            background-color: #f0f0f0;
+            color: #000;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-left: 10px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .toolbar button {
+            padding: 5px 10px;
+            font-size: 12px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .toolbar .search {
+            display: flex;
+            align-items: center;
+        }
+
+        .toolbar .search input {
+            padding: 5px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .toolbar .search button {
+            padding: 5px 10px;
+            margin-left: 5px;
+            font-size: 14px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .link {
+            display: flex;
+            align-items: center;
+        }
+
+        .link a {
+            text-decoration: none;
+            color: #007bff;
+            margin-right: 10px;
+        }
+
+        .link .path {
+            flex: 1;
+            text-align: right;
+            margin-top: 0;
+        }
+
+        .link .path p {
+            margin: 0 0 5px;
+        }
+
+        .link .path a {
+            text-decoration: none;
+            color: #007bff;
+            margin: 0 2px;
+        }
+
+        .link .path a:hover {
+            text-decoration: underline;
+        }
+
+        .file-container {
+            padding: 10px;
+        }
+
+        .file-item {
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin: 5px;
+        }
+
+        .file-item.selected {
+            background-color: yellow;
+        }
+
+        .grid-view {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 150px);
+            gap: 10px;
+        }
+
+        .grid-view .file-item {
+            width: 150px;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .list-view .file-details {
+            display: block;
+            position: absolute; /* 绝对定位 */
+            right: 300px; /* 根据需要调整位置 */
+            top: 50%; /* 根据需要调整位置 */
+            transform: translateY(-50%); /* 垂直居中 */
+        }
+
+        .grid-view .file-details {
+            display: none;
+        }
+
+        .list-view .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative; /* 保持相对定位 */
+        }
+
+        .file-item .file-info{
+            max-width: 350px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .visibility-info {
+            color: #AF2018;
+            position: absolute;
+            right: 120px; /* 根据实际需要调整 */
+        }
+
+        .grid-view .visibility-info{
+            display: none;
+        }
+
+        .toggle-container {
+            display: flex;
+            margin-left: auto;
+        }
+
+        .list-view .file-item .toggle-button{
+            padding: 5px 10px;
+            margin: 5px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-button:hover {
+            background-color: #0088ff;
+        }
+
+        .grid-view .toggle-button{
+            display: none;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            text-align: center;
+        }
+
+        .modal-content input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .modal-content button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 14px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .modal-content .cancel-btn {
+            background-color: #f44336;
+        }
+
+    </style>
+</head>
+<body>
+<input type="hidden" id="parentId" th:value="${parentId}"/>
+<input type="hidden" id="currentUserId" th:value="${currentUserId}">
+<input type="hidden" id="directoryUserId" th:value="${directoryUserId}">
+<div class="main-container">
+    <div class="tree-directory">
+        <div th:fragment="folderFragment">
+            <a id="return-home" href="/page/1">返回主页</a>
+            <a class="reloadFolder" href="#" onClick="reloadFolder()">刷新</a>
+            <ul>
+                <li class="folder" th:if="${root != null}">
+                    <!--                    这里仅对应第一个root位置的点击，剩下的所以子目录全都在child位置-->
+                    <span onclick="toggleFolder(this.parentElement)">📁</span>
+                    <a href="#" th:data-id="${root.id}" onClick="loadDirectoryContent(event)" th:text="${root.name}" style="color: #0a001f"></a>
+                    <ul class="nested" th:if="${root.children != null && #lists.size(root.children) > 0}" th:insert="::node(children=${root.children})"></ul>
+                </li>
+            </ul>
+
+            <div th:fragment="node (children)">
+                <ul>
+                    <li th:each="child : ${children}" class="folder">
+                        <!--                        点击文件图案展开文件夹-->
+                        <span onclick="toggleFolder(this.parentElement)">📁</span>
+                        <!--                        点击目录名跳转到该目录下-->
+                        <a href="#" th:data-id="${child.id}" onclick="loadDirectoryContent(event)" th:text="${child.name}" style="color: #0a001f"></a>
+                        <ul class="nested" th:if="${child.children != null && #lists.size(child.children) > 0}" th:insert="::node(children=${child.children})"></ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div th:fragment="contentFragment">
+            <a href="#" th:data-id="${returnsId}" onclick="loadDirectoryContent(event)">返回</a>
+            <div class="view-buttons">
+                <button onclick="toggleView('list')">列表视图</button>
+                <button onclick="toggleView('grid')">网格视图</button>
+            </div>
+            <div class="toolbar">
+                <button th:if="${currentUserId == directoryUserId}" onclick="document.getElementById('fileInput').click()">上传</button>
+                <input type="file" id="fileInput" accept=".pdf" multiple style="display: none;">
+                <button th:if="${currentUserId == directoryUserId}" onclick="openCreateFolderModal()">新建文件夹</button>
+                <div class="search">
+                    <input type="text" id="searchInput" placeholder="搜索您的文件目录">
+                    <button onclick="search()">🔍</button>
+                </div>
+                <button th:if="${currentUserId == directoryUserId}" onclick="performAction('delete')">删除选中项</button>
+                <button onclick="performAction('download')">下载选中项</button>
+            </div>
+            <div class="link">
+                <div class="path">
+                    <p>路径:
+                        <span th:each="segment, iterStat : ${pathSegments}">
+                            <span th:if="${!iterStat.first}">/</span>
+                            <a href="#" th:data-id="${segment.parentId}" th:text="${segment.name}" onClick="loadDirectoryContent(event)"></a>
+
+                        </span>
+                    </p>
+                </div>
+            </div>
+            <!-- 展示区域 -->
+            <div id="file-container" class="list-view file-container">
+                <!--                目录展示区域-->
+                <div th:each="directory : ${directoryList}">
+                    <!-- 如果 directory.visibleType = 1 或者 directory.userId = currentUserId 才展示 -->
+                    <div th:if="${directory.visibleType == 1 || directory.userId == currentUserId}">
+                        <!-- 点击file-item区域即可选中 -->
+                        <div class="file-item" th:onclick="'toggleSelect(event, this, \'directory\', ' + ${directory.id} + ')'">
+                            <!-- 点击目录名部分跳转 -->
+                            <a class="file-info" href="#" th:data-id="${directory.id}" th:text="${directory.name}" onClick="loadDirectoryContent(event)"></a>
+                            <!-- 展示目录可视性 -->
+                            <span class="visibility-info" th:text="${directory.visibleType == 1 ? '当前目录为：公开' : '当前目录为：私密'}"></span>
+                            <!-- 如果该目录是用户自己的才有权利更改可见性 -->
+                            <div class="toggle-container" th:if="${directory.userId == currentUserId}">
+                                <!-- 点击更改目录可视性 -->
+                                <button class="toggle-button" th:data-id="${directory.id}" th:data-visible="${directory.visibleType}" onClick="turnVisibleType(event)"
+                                        th:utext="${directory.visibleType == 1 ? '切换为私密' : '切换为公开'}"></button> <!-- 添加按钮 -->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!--                文件显示区域-->
+                <div th:each="file : ${fileList}">
+                    <div class="file-item" th:onclick="'toggleSelect(event, this, \'file\', ' + ${file.id} + ')'">
+                        <input type="hidden" name="fileId" th:value="${file.id}">
+                        <span class="file-info" th:text="${file.name}"></span>
+                        <div class="file-details">
+                            <span>文件大小: <span th:text="${file.size} + ' ' + ${file.sizeUnit}"></span></span>
+                            <span>上传时间:</span><span th:text="${file.time}"></span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="#" th:attr="data-url=${file.url}" onclick="copyDownloadLink(event, this)">复制下载链接</a>
+                            <a th:href="${file.url}" target="_blank" onclick="event.stopPropagation()">下载</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="createFolderModal" class="modal">
+                <div class="modal-content">
+                    <span>请输入新文件夹名称</span>
+                    <input type="text" id="newFolderName" placeholder="输入文件夹名称">
+                    <button onclick="createFolder()">创建</button>
+                    <button class="cancel-btn" onclick="closeCreateFolderModal()">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- JavaScript部分 -->
+<script>
+    let selectedFiles = [];
+    let selectedDirectories = [];
+    let parentId = document.getElementById('parentId').value;
+
+    // 切换目录可视性
+    function turnVisibleType(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        const directoryId = event.target.getAttribute("data-id");
+        const visible = event.target.getAttribute("data-visible");
+        if(visible === '1'){
+            $.confirm('确定设置该目录为私密吗?','提示信息',{
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+                define: function() {
+                    $.message({content:'设置成功',time:2000})
+                    const url = '/turnClose?directoryId=' + directoryId;
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            if(data.status === "success"){
+                                reloadContent();
+                            } else {
+                                console.error('Error: Operation failed');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error processing request:', error);
+                        });
+                },
+                cancel: function() {
+                    $.message({content:'取消成功',time:2000})
+                }
+            })
+        }else {
+            $.confirm('确定设置该目录为公开吗?','提示信息',{
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+                define: function() {
+                    $.message({content:'设置成功',time:2000})
+                    const url = '/turnOpen?directoryId=' + directoryId;
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === "success") {
+                                reloadContent();
+                            } else {
+                                console.error('Error: Operation failed');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error processing request:', error);
+                        });
+                },
+                cancel: function() {
+                    $.message({content:'取消成功',time:2000})
+                }
+            })
+        }
+    }
+
+    // 目录展开和关闭
+    function toggleFolder(element) {
+        element.classList.toggle('open');
+    }
+
+    // 树形目录和fragment内目录和路径目录点击跳转
+    function loadDirectoryContent(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        // 清空选择的文件和目录
+        selectedFiles = [];
+        selectedDirectories = [];
+        //这里更新parentId的值
+        parentId = event.target.getAttribute('data-id');
+        if (parentId === '-1') {
+            window.location.href = "/page/1";
+            return;
+        }
+        reloadContent();
+    }
+
+    function search() {
+        const searchInputElement = document.getElementById('searchInput');
+        const searchString = searchInputElement.value.trim();
+        if (searchString === "") {
+            alert("搜索内容不能为空，请重试");
+            return;
+        }
+        // 清空选择的文件和目录
+        selectedFiles = [];
+        selectedDirectories = [];
+        const container = document.querySelector('.container');
+        const url = '/searchResult?searchString=' + encodeURIComponent(searchString);
+
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                container.innerHTML = html;
+                // 清除所有选中状态的样式
+                const selectedElements = container.querySelectorAll('.selected');
+                selectedElements.forEach(element => element.classList.remove('selected'));
+            })
+            .catch(error => {
+                console.error('Error loading directory content:', error);
+            });
+    }
+
+
+    // 单独重新加载文件展示
+    function reloadContent() {
+        const container = document.querySelector('.container');
+        const url = '/FileManagementContent?parentId=' + parentId;
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                container.innerHTML = html;
+                // 清除所有选中状态的样式
+                const selectedElements = container.querySelectorAll('.selected');
+                selectedElements.forEach(element => element.classList.remove('selected'));
+                // 重新绑定文件输入框的 change 事件
+                document.getElementById('fileInput').addEventListener('change', uploadFiles);
+                //视图切换
+                const currentView = localStorage.getItem('currentView') || 'list';
+                toggleView(currentView);
+            })
+            .catch(error => {
+                console.error('Error loading directory content:', error);
+            });
+    }
+
+    // 单独重新加载树形目录
+    function  reloadFolder(){
+        const treeDirectory = document.querySelector('.tree-directory');
+        const url = '/FileManagementFolder';
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                treeDirectory.innerHTML = html;
+            })
+    }
+
+    // 上传文件到服务器
+    function uploadFiles() {
+        var files = document.getElementById('fileInput').files;
+        let formData = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            console.log("上传的文件是:", files[i].name);
+            // 这里可以添加将文件发送到服务器的代码
+            formData.append('file', files[i]);
+        }
+        formData.append('parentId', parentId);
+        fetch('/fileUpload', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'success') {
+                    console.log('文件上传成功');
+                    // 重新加载当前目录内容，而不是整个页面
+                    loadDirectoryContent({ preventDefault: () => {}, stopPropagation: () => {}, target: { getAttribute: () => parentId } });
+                    closeCreateFolderModal();
+                } else {
+                    console.error('文件上传失败:', data.message);
+                }
+            })
+            .catch(error => console.error('发生错误:', error));
+    }
+
+    // 监听文件选择器的变化，一旦用户选择了文件，就调用 uploadFiles 函数
+    document.getElementById('fileInput').addEventListener('change', uploadFiles);
+
+
+    // 打开新建文件夹弹出框
+    function openCreateFolderModal() {
+        document.getElementById('createFolderModal').style.display = 'block';
+    }
+    // 关闭新建文件夹弹出框
+    function closeCreateFolderModal() {
+        document.getElementById('createFolderModal').style.display = 'none';
+    }
+    // 创建新文件夹
+    function createFolder() {
+        const folderName = document.getElementById('newFolderName').value.trim();
+
+        if (folderName === "") {
+            alert("文件夹名称不能为空,请重新输入");
+            return;
+        }
+        if (folderName) {
+            let formData = new FormData();
+            formData.append("parentId", parentId);
+            formData.append("directoryName", folderName);
+            fetch('/createDirectory', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.message === 'success') {
+                        console.log('文件夹创建成功');
+                        // 重新加载当前目录内容，而不是整个页面
+                        loadDirectoryContent({ preventDefault: () => {}, stopPropagation: () => {}, target: { getAttribute: () => parentId } });
+                        closeCreateFolderModal();
+                    } else {
+                        console.error('文件夹创建失败:', data.message);
+                    }
+                })
+                .catch(error => console.error('发生错误:', error));
+        } else {
+            alert('文件夹名称不能为空，请输入文件夹名称');
+        }
+    }
+
+    // 选择文件和目录
+    function toggleSelect(event, element, type, id) {
+        // 切换选中状态
+        element.classList.toggle('selected');
+
+        // 根据类型执行不同的操作
+        if (type === 'directory') {
+            // 处理选中文件夹的逻辑
+            if (selectedDirectories.includes(id)) {
+                selectedDirectories = selectedDirectories.filter(dirId => dirId !== id);
+            } else {
+                selectedDirectories.push(id);
+            }
+        } else if (type === 'file') {
+            // 处理选中文件的逻辑
+            if (selectedFiles.includes(id)) {
+                selectedFiles = selectedFiles.filter(fileId => fileId !== id);
+            } else {
+                selectedFiles.push(id);
+            }
+        }
+
+        console.log('Selected Files:', selectedFiles);
+        console.log('Selected Directories:', selectedDirectories);
+    }
+
+    // 下载或者删除文件和目录
+    function performAction(action) {
+        if (selectedFiles.length === 0 && selectedDirectories.length === 0) {
+            alert('请选择至少一个文件或目录进行操作');
+            return;
+        }
+        fetch(`/perform-${action}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ files: selectedFiles, directories: selectedDirectories })
+        }).then(response => {
+            if (action === 'download') {
+                alert('正在下载');
+                return response.blob();//如果响应成功，它会调用 response.blob() 方法
+            } else {
+                alert('删除成功');
+                return response.text();
+            }
+        }).then(data => {
+            if (action === 'download') {
+                // 创建一个 URL 对象，指向下载的数据
+                const url = window.URL.createObjectURL(data);
+                // 创建一个 <a> 元素
+                const a = document.createElement('a');
+                a.style.display = 'none';  // 隐藏 <a> 元素
+                a.href = url;  // 设置 <a> 元素的 href 属性为下载数据的 URL
+                a.download = 'download.zip';  // 设置下载的文件名
+                // 将 <a> 元素添加到文档中
+                document.body.appendChild(a);
+                // 程序化地点击 <a> 元素，触发下载
+                a.click();
+                // 下载完成后，移除 URL 对象，释放内存
+                window.URL.revokeObjectURL(url);
+            }
+            // 重新加载当前目录内容，而不是整个页面。把之前选中的部分刷新一次
+            loadDirectoryContent({ preventDefault: () => {}, stopPropagation: () => {}, target: { getAttribute: () => parentId } });
+            closeCreateFolderModal();
+        }).catch(error => {
+            console.error('Error:', error);
+            alert('操作失败');
+        });
+    }
+
+    // 复制下载链接到剪贴板
+    function copyDownloadLink(event, element) {
+        //阻止事件的冒泡和默认行为
+        event.stopPropagation();
+        event.preventDefault();
+        const url = element.getAttribute('data-url');
+
+        // 创建一个临时的输入元素
+        const tempInput = document.createElement('input');
+        tempInput.style.position = 'absolute';
+        tempInput.style.left = '-9999px';
+        tempInput.value = url;
+
+        // 将临时输入元素添加到文档
+        document.body.appendChild(tempInput);
+
+        // 选择并复制输入元素的内容
+        tempInput.select();
+        document.execCommand('copy');
+
+        // 移除临时输入元素
+        document.body.removeChild(tempInput);
+
+        alert('下载链接已复制到剪贴板: ' + url);
+    }
+
+    // 切换视图
+    function toggleView(view) {
+        const container = document.getElementById('file-container');
+        container.className = view + '-view file-container';
+        localStorage.setItem('currentView', view);
+    }
+
+</script>
+</body>
+</html>
+
