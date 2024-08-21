@@ -350,6 +350,7 @@
             </div>
             <div class="toolbar">
                 <button th:if="${currentUserId == directoryUserId}" onclick="document.getElementById('fileInput').click()">上传</button>
+<!--                修改仅能上传pdf文件-->
                 <input type="file" id="fileInput" multiple style="display: none;">
                 <button th:if="${currentUserId == directoryUserId}" onclick="openCreateFolderModal()">新建文件夹</button>
                 <div class="search">
