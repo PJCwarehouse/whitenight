@@ -26,6 +26,13 @@
 	</repositories>
 
 	<dependencies>
+
+<!--		用户登录session-redis-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.session</groupId>-->
+<!--			<artifactId>spring-session-data-redis</artifactId>-->
+<!--		</dependency>-->
+
 <!--		Aop切面依赖-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

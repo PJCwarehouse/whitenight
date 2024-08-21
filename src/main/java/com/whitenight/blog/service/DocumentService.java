@@ -85,13 +85,13 @@ public class DocumentService {
             }
         }
 //        目前不需要在树形目录展示文件
-//        List<DocumentEntity> fileEntities = documentMapper.getList(root.getId(), "file");
-//        List<DirectoryTreeNode> fileTreeNodes = new ArrayList<>();
-//        for(DocumentEntity documentEntity : fileEntities){
-//            DirectoryTreeNode directoryTreeNode = new DirectoryTreeNode(documentEntity.getId(), documentEntity.getName(), documentEntity.getType());
-//            fileTreeNodes.add(directoryTreeNode);
-//        }
-//        directoryTreeNodes.addAll(fileTreeNodes);
+        List<DocumentEntity> fileEntities = documentMapper.getList(root.getId(), "file");
+        List<DirectoryTreeNode> fileTreeNodes = new ArrayList<>();
+        for(DocumentEntity documentEntity : fileEntities){
+            DirectoryTreeNode directoryTreeNode = new DirectoryTreeNode(documentEntity.getId(), documentEntity.getName(), documentEntity.getType());
+            fileTreeNodes.add(directoryTreeNode);
+        }
+        directoryTreeNodes.addAll(fileTreeNodes);
         root.setChildren(directoryTreeNodes);
     }
     public void updateOpenness(int directoryId, int visibleType){

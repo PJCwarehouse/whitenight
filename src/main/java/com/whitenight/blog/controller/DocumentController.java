@@ -68,6 +68,7 @@ public class DocumentController {
         return "Directory/FileManagement";
     }
 
+    //搜索功能跳转界面
     @GetMapping("/searchResult")
     public String searchResult(@RequestParam("searchString") String searchString, Model model){
         List<DocumentEntity> documentEntities = documentService.searchResult(searchString);
@@ -86,6 +87,7 @@ public class DocumentController {
 
         return "Directory/searchResult :: contentFragment";
     }
+
 //    文件管理内容部分跳转
     @GetMapping("/FileManagementContent")
     public String getDirectoryContent(@RequestParam("parentId") int parentId, Model model) {

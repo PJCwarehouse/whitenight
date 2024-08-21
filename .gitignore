@@ -5,3 +5,5 @@
 /docker-compose.yml
 /Dockerfile
 /src/main/resources/uselessHTML
+/fileManagement/file-directory-zip/*
+/fileManagement/loadFiles/*

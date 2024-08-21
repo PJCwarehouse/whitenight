@@ -350,7 +350,7 @@
             </div>
             <div class="toolbar">
                 <button th:if="${currentUserId == directoryUserId}" onclick="document.getElementById('fileInput').click()">上传</button>
-                <input type="file" id="fileInput" accept=".pdf" multiple style="display: none;">
+                <input type="file" id="fileInput" multiple style="display: none;">
                 <button th:if="${currentUserId == directoryUserId}" onclick="openCreateFolderModal()">新建文件夹</button>
                 <div class="search">
                     <input type="text" id="searchInput" placeholder="搜索您的文件目录">
