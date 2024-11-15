@@ -568,32 +568,139 @@
     }
 
     // 上传文件到服务器
-    function uploadFiles() {
-        var files = document.getElementById('fileInput').files;
-        let formData = new FormData();
-        for (var i = 0; i < files.length; i++) {
-            console.log("上传的文件是:", files[i].name);
-            // 这里可以添加将文件发送到服务器的代码
-            formData.append('file', files[i]);
+    // function uploadFiles() {
+    //     var file = document.getElementById('fileInput').files[0];
+    //     let formData = new FormData();
+    //     console.log("上传的文件是:", file.name);
+    //     // 这里可以添加将文件发送到服务器的代码
+    //     formData.append('file', file);
+    //
+    //     formData.append('parentId', parentId);
+    //     fetch('/fileUpload', {
+    //         method: 'POST',
+    //         body: formData
+    //     })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             if (data.message === 'success') {
+    //                 alert("文件上传成功");
+    //                 console.log('文件上传成功');
+    //                 // 重新加载当前目录内容，而不是整个页面
+    //                 loadDirectoryContent({ preventDefault: () => {}, stopPropagation: () => {}, target: { getAttribute: () => parentId } });
+    //                 closeCreateFolderModal();
+    //             } else {
+    //                 console.error('文件上传失败:', data.message);
+    //             }
+    //         })
+    //         .catch(error => console.error('发生错误:', error));
+    // }
+
+    // 上传单个文件到服务器
+    function uploadSingleFile() {
+        var file = document.getElementById('fileInput').files[0];
+        var uploadUrl = '/fileUpload'; // 服务器上传接口的URL
+        var chunkSize = 1024 * 1024; // 1MB 分片大小
+        var offset = 0; // 初始化分片的起始位置
+
+        // 上传单个分片
+        function uploadChunk(offset) {
+            const chunk = file.slice(offset, offset + chunkSize);
+            let formData = new FormData();
+            formData.append('file', chunk);
+            formData.append('offset', offset);
+            formData.append('total', file.size);
+            formData.append('filename', file.name);
+
+            return fetch(uploadUrl, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json());
         }
-        formData.append('parentId', parentId);
-        fetch('/fileUpload', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message === 'success') {
-                    console.log('文件上传成功');
-                    // 重新加载当前目录内容，而不是整个页面
-                    loadDirectoryContent({ preventDefault: () => {}, stopPropagation: () => {}, target: { getAttribute: () => parentId } });
-                    closeCreateFolderModal();
-                } else {
-                    console.error('文件上传失败:', data.message);
+
+        // 重试上传分片
+        function retryUpload(offset, retries = 3) {
+            return uploadChunk(offset)
+                .then(data => {
+                    if (data.message === 'success') {
+                        if (offset + chunkSize < file.size) {
+                            // 如果还有未上传的数据，继续上传下一个分片
+                            return retryUpload(offset + chunkSize, retries);
+                        }
+                    } else {
+                        throw new Error('Upload failed');
+                    }
+                })
+                .catch(error => {
+                    if (retries > 0) {
+                        console.log(`Retrying... Attempt ${4 - retries} for offset ${offset}`);
+                        return retryUpload(offset, retries - 1); // 减少重试次数并重试
+                    } else {
+                        throw new Error(`Max retries reached for offset ${offset}`);
+                    }
+                });
+        }
+
+        // 开始上传文件
+        retryUpload(offset)
+            .then(() => {
+                console.log('File upload completed:', file.name);
+            })
+            .catch(error => {
+                console.error('Failed to upload file:', file.name, error);
+                // 处理上传过程中的错误
+            });
+    }
+
+    // 从<input type="file">中获取单个文件并开始上传
+    document.getElementById('fileInput').addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            console.log("Uploading file:", file.name);
+            uploadSingleFile(file); // 开始上传单个文件
+        }
+    });
+
+        // 重试上传分片
+        function retryUpload(retries = 3) {
+            return uploadChunk()
+                .then(nextOffset => {
+                    if (retries > 0 && nextOffset < file.size) {
+                        return retryUpload(retries - 1); // 继续上传下一个分片
+                    } else if (retries === 0) {
+                        throw new Error('Max retries reached');
+                    }
+                    return nextOffset;
+                })
+                .catch(error => {
+                    console.error('Upload error:', error);
+                    throw error; // 将错误向外传递
+                });
+        }
+
+        // 开始上传文件
+        retryUpload()
+            .then(nextOffset => {
+                if (nextOffset < file.size) {
+                    // 如果还有未上传的数据，继续上传下一个分片
+                    retryUpload();
                 }
             })
-            .catch(error => console.error('发生错误:', error));
+            .catch(error => {
+                console.error('Failed to upload file:', file.name, error);
+                // 处理上传过程中的错误
+            });
     }
+
+    // 从<input type="file">中获取单个文件并开始上传
+    document.getElementById('fileInput').addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            console.log("Uploading file:", file.name);
+            uploadSingleFile(file); // 开始上传单个文件
+        }
+    });
+
 
     // 监听文件选择器的变化，一旦用户选择了文件，就调用 uploadFiles 函数
     document.getElementById('fileInput').addEventListener('change', uploadFiles);

@@ -3,16 +3,20 @@ package com.whitenight.blog.controller;
 import com.github.pagehelper.PageInfo;
 import com.whitenight.blog.entity.ArticleEntity;
 import com.whitenight.blog.entity.CommentsEntity;
+import com.whitenight.blog.entity.UserEntity;
 import com.whitenight.blog.service.ArticleService;
 import com.whitenight.blog.service.CommentsService;
 import com.whitenight.blog.service.UserService;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,30 +41,59 @@ public class ArticleController {
     }
 
     //发布文章
-    @RequestMapping("/deposit")
+    @RequestMapping("/publish")
     @ResponseBody // 添加这个注解以将返回值作为响应的主体
-    public Map<String, String> deposit(String title, String content){
-        Date time = new Date();
-        String author = userService.getUsername();
-        int userId = userService.getId();
-        articleService.Insert(title,content,time,author,userId);
-        System.out.println("成功发布文章，文章名:" + title);
+    public Map<String, String> publish(String title, String content, HttpServletRequest request){
+        // 获取HttpSession
+        HttpSession session = request.getSession();
+        // 从Session中获取用户ID
+        UserDetails userDetails = (UserDetails) session.getAttribute("userDetails");
+        if (userDetails != null) {
+            // 假设UserDetails的实现类中有getId方法
+            int userId = ((UserEntity) userDetails).getId();
+            String author = ((UserEntity) userDetails).getUsername();
+            Date time = new Date();
+            articleService.Insert(title,content,time,author,userId);
+            System.out.println("成功发布文章，文章名:" + title);
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "success");
+            System.out.println("使用session");
+            return response;
+        } else {
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "fail");
+            return response;
+        }
+//        String author = userService.getUsername();
+//        int userId = userService.getId();
 
-        Map<String, String> response = new HashMap<>();
-        response.put("status", "success");
-        return response;
     }
 
     //返回首页
     @GetMapping(value = "/page/{p}")
     public String index(@RequestParam(name = "SuccessSubmitted", required = false) String SuccessSubmitted,
                         @RequestParam(name = "NoPermission", required = false) String NoPermission,
-                        @PathVariable("p") int page, @RequestParam(value = "count", defaultValue = "5") int count, Model model) {
+                        @PathVariable("p") int page, @RequestParam(value = "count", defaultValue = "5") int count, Model model, HttpServletRequest request) {
+        // 获取HttpSession
+        HttpSession session = request.getSession();
+        // 从Session中获取用户ID
+        UserDetails userDetails = (UserDetails) session.getAttribute("userDetails");
+
         PageInfo<ArticleEntity> articles = articleService.selectArticleWithPage(page, count);
         model.addAttribute("articles", articles);
 
-        int userid = userService.getId();
-        String username = userService.getUsername();
+        int userid;
+        String username;
+        if(userDetails != null){
+            userid = ((UserEntity)userDetails).getId();
+            username = ((UserEntity)userDetails).getUsername();
+            System.out.println("使用session");
+        }else {
+            userid = userService.getId();
+            username = userService.getUsername();
+            System.out.println("没有使用session");
+        }
+
         model.addAttribute("userid", userid);
         model.addAttribute("username", username);
         // 使用 paramName，这里可以根据参数进行逻辑处理

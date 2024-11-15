@@ -165,7 +165,8 @@ public class DocumentController {
             documentService.updateUrl(documentEntity.getId(),fileDownloadUrl);
             // 保存文件到本地
             File downloadFile = new File(uploadPath, id);
-            FileCopyUtils.copy(file.getBytes(), downloadFile);
+//            FileCopyUtils.copy(file.getBytes(), downloadFile);
+            file.transferTo(downloadFile);
             System.out.println("上传文件:" + fileName);
         } catch (IOException e) {
             e.printStackTrace();
@@ -396,24 +397,24 @@ public class DocumentController {
         return ResponseEntity.ok(response);
     }
 
-    //    总目录
-    @GetMapping("/directorySummary")
-    public String directoryController(Model model){
-        Map<String, List<DocumentEntity>> map = new HashMap<>();
-        //获取以0为父目录的用户根目录列表
-        List<DocumentEntity> lists = documentService.getDirectoryList(0);
-        for(DocumentEntity list : lists){
-            // 获取目录列表并过滤掉 Openness 值为 0 的条目
-            List<DocumentEntity> directoryList = documentService.getDirectoryList(list.getId())
-                    .stream()
-                    .filter(directory -> directory.getVisibleType() != 0)
-                    .collect(Collectors.toList());
-            if(directoryList.isEmpty()) continue;
-            map.put(list.getName(), directoryList);
-        }
-        model.addAttribute("map",map);
-        return "Directory/directorySummary";
-    }
+    //    总目录 //废案
+//    @GetMapping("/directorySummary")
+//    public String directoryController(Model model){
+//        Map<String, List<DocumentEntity>> map = new HashMap<>();
+//        //获取以0为父目录的用户根目录列表
+//        List<DocumentEntity> lists = documentService.getDirectoryList(0);
+//        for(DocumentEntity list : lists){
+//            // 获取目录列表并过滤掉 Openness 值为 0 的条目
+//            List<DocumentEntity> directoryList = documentService.getDirectoryList(list.getId())
+//                    .stream()
+//                    .filter(directory -> directory.getVisibleType() != 0)
+//                    .collect(Collectors.toList());
+//            if(directoryList.isEmpty()) continue;
+//            map.put(list.getName(), directoryList);
+//        }
+//        model.addAttribute("map",map);
+//        return "Directory/directorySummary";
+//    }
 
     //  目录管理界面
     @GetMapping("/publicDirectory")

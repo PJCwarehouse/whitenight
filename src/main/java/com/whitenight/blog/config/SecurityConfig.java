@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
@@ -44,8 +45,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
                 //强行把登录成功的跳转页面定位到https，不然会跳到http://www.masteryy.top/index
-                .successHandler((httpServletRequest, httpServletResponse, authentication) -> {
-                    httpServletResponse.sendRedirect("/page/1");
+                .successHandler((request, response, authentication) -> {
+                    // 确保authentication不为空，并且用户已认证
+                    if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+                        UserDetails user = (UserDetails) authentication.getPrincipal();
+                        // 将UserDetails存储到session中
+                        request.getSession().setAttribute("userDetails", user);
+                    }
+                    // 重定向到安全页面，注意URL需要根据实际情况进行编码
+                    response.sendRedirect(response.encodeRedirectURL("/page/1"));
                 })
                 .failureHandler((httpServletRequest, httpServletResponse, e) -> {
                     httpServletResponse.sendRedirect("/loginError"); // 失败跳loginError
